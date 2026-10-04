@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+
+/* Mêmes classes utilitaires que SuiviCours (appli formateur), pour une identité commune. */
+.sc-btn {
+  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold
+         bg-alag-blue-light text-alag-navy hover:bg-alag-blue hover:text-white transition-colors shadow-sm
+         disabled:opacity-50 disabled:cursor-not-allowed;
+}
+.sc-btn-primary {
+  @apply sc-btn bg-alag-navy text-white hover:bg-alag-navy-dark;
+}
+.sc-card {
+  @apply rounded-xl border border-slate-200 bg-white shadow-sm;
+}
+.sc-input {
+  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm
+         focus:border-alag-blue focus:outline-none focus:ring-1 focus:ring-alag-blue;
+}
+
+@tailwind utilities;
