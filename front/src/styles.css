@@ -1,21 +1,36 @@
 @tailwind base;
 @tailwind components;
 
-/* Mêmes classes utilitaires que SuiviCours (appli formateur), pour une identité commune. */
+@layer base {
+  body { @apply bg-paper text-slate-900 antialiased; }
+  h1, h2, h3 { font-family: theme('fontFamily.display'); letter-spacing: -0.01em; }
+  table { font-variant-numeric: tabular-nums; }
+  :focus-visible { outline: 2px solid theme('colors.accent.DEFAULT'); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+/* Mêmes classes que SuiviCours (appli formateur), pour une identité commune.
+   Déclarées AVANT @tailwind utilities : les classes utilitaires peuvent ainsi les surcharger. */
 .sc-btn {
-  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold
-         bg-alag-blue-light text-alag-navy hover:bg-alag-blue hover:text-white transition-colors shadow-sm
-         disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex min-h-[40px] items-center justify-center gap-1.5 rounded-md px-3.5 py-1.5 text-sm font-medium
+         bg-alag-navy text-white hover:bg-alag-navy-dark active:scale-[0.98]
+         transition duration-150 disabled:cursor-not-allowed disabled:opacity-50;
 }
-.sc-btn-primary {
-  @apply sc-btn bg-alag-navy text-white hover:bg-alag-navy-dark;
+/* Ancien nom, encore utilisé par les pages : même rendu que le bouton principal. */
+.sc-btn-primary { @apply sc-btn; }
+.sc-btn-accent { @apply sc-btn bg-accent hover:bg-accent-hover; }
+.sc-btn-ghost {
+  @apply sc-btn bg-transparent text-alag-navy ring-1 ring-inset ring-slate-300 hover:bg-slate-100;
 }
-.sc-card {
-  @apply rounded-xl border border-slate-200 bg-white shadow-sm;
+.sc-btn-danger {
+  @apply sc-btn bg-transparent text-red-700 ring-1 ring-inset ring-red-300 hover:bg-red-600 hover:text-white hover:ring-red-600;
 }
+.sc-card { @apply rounded-lg border border-slate-300/70 bg-white; }
 .sc-input {
-  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm
-         focus:border-alag-blue focus:outline-none focus:ring-1 focus:ring-alag-blue;
+  @apply w-full min-h-[40px] rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm
+         focus:border-alag-navy focus:outline-none focus:ring-2 focus:ring-accent/40;
 }
 
 @tailwind utilities;

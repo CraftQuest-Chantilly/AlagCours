@@ -151,7 +151,7 @@ function route_quizz_repondre(string $codePromo, string $qpromBrut): void
         $texte = mb_substr(trim((string)($corps['repLibre'] ?? '')), 0, 100);
         $maj = Db::exec('UPDATE "T_Stagiaire_QuestionRep" SET "SQR_RepLibre" = :t WHERE "SQR_CodeSQQ" = :sqq', [':t' => $texte, ':sqq' => $sqq]);
         if ($maj === 0) {
-            Db::exec('INSERT INTO "T_Stagiaire_QuestionRep" ("SQR_CodeSQQ", "SQR_RepLibre") VALUES (:sqq, :t)', [':sqq' => $sqq, ':t' => $texte]);
+            Db::exec('INSERT INTO "T_Stagiaire_QuestionRep" ("SQR_CodeStagQuestR", "SQR_CodeSQQ", "SQR_RepLibre") VALUES ((SELECT COALESCE(MAX("SQR_CodeStagQuestR"), 0) + 1 FROM "T_Stagiaire_QuestionRep"), :sqq, :t)', [':sqq' => $sqq, ':t' => $texte]);
         }
         Http::json(['ok' => true]);
         return;

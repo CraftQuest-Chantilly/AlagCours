@@ -115,8 +115,8 @@ function route_evaluation_soumettre(string $codePromo): void
         $code = (int)$q['code'];
         $remarque = trim((string)($remarques[(string)$code] ?? ''));
         Db::exec(
-            'INSERT INTO "T_Quizz_Eval_Rep" ("QER_CodePromo", "QER_CodeStagiaire", "QER_CodeQuest", "QER_Valeur", "QER_ReponseTexte")
-             VALUES (:p, :s, :q, :v, :r)',
+            'INSERT INTO "T_Quizz_Eval_Rep" ("QER_Quizz_Eval_Rep", "QER_CodePromo", "QER_CodeStagiaire", "QER_CodeQuest", "QER_Valeur", "QER_ReponseTexte")
+             VALUES ((SELECT COALESCE(MAX("QER_Quizz_Eval_Rep"), 0) + 1 FROM "T_Quizz_Eval_Rep"), :p, :s, :q, :v, :r)',
             [
                 ':p' => $codePromo,
                 ':s' => $c['sub'],

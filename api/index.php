@@ -92,6 +92,7 @@ $routes = [
     // générique ci-dessous qui force tout paramètre capturé en chiffres (Http::id()).
     ['GET',  '#^/atelier/bases$#',      'route_atelier_bases'],
     ['GET',  '#^/atelier/schema$#',     'route_atelier_schema'],
+    ['GET',  '#^/atelier/relations$#',  'route_atelier_relations'],
     ['POST', '#^/atelier/executer$#',   'route_atelier_executer'],
     // Atelier SQL — partiel (stagiaire).
     ['GET',  '#^/formations/(\d+)/atelier/partiels$#',                              'route_atelier_partiels'],

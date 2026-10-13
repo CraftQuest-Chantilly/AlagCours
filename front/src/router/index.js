@@ -32,7 +32,7 @@ const routes = [
       // Gestion des fichiers (E8bis, 26/09/2026) — remplace entièrement l'ancien flux
       // admin-promos / admin-promo-fichiers (PAGE_ChoixPromo + PAGE_ModifFicDroit) par un écran
       // unique calqué sur PAGE_Fichiers_Adm du site legacy al-cours (voir AdminGestionFichiersPage.vue).
-      { path: 'formateur/fichiers', name: 'admin-fichiers', component: () => import('@/pages/AdminGestionFichiersPage.vue'), meta: { type: 'formateur' } }
+      { path: 'formateur/fichiers', name: 'admin-fichiers', component: () => import('@/pages/AdminGestionFichiersPage.vue'), meta: { type: 'formateur', large: true } }
     ]
   },
   { path: '/:pathMatch(.*)*', redirect: '/' }

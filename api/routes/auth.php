@@ -22,8 +22,8 @@ function verifier_mdp(string $saisi, string $stocke): bool
 function journaliser_connexion(string $identifiant, string $statut, ?string $codeUser, string $info = ''): void
 {
     Db::exec(
-        'INSERT INTO "TS_LOG" ("LOG_Date","LOG_Heure","LOG_Identifiant","LOG_IP","LOG_Co_Deco","LOG_CodeUser","LOG_Info","LOG_Out","LOG_HeureDerGo")
-         VALUES (:d, :h, :id, :ip, :st, :cu, :info, false, :h)',
+        'INSERT INTO "TS_LOG" ("LOG_IdLOG","LOG_Date","LOG_Heure","LOG_Identifiant","LOG_IP","LOG_Co_Deco","LOG_CodeUser","LOG_Info","LOG_Out","LOG_HeureDerGo")
+         VALUES ((SELECT COALESCE(MAX("LOG_IdLOG"), 0) + 1 FROM "TS_LOG"), :d, :h, :id, :ip, :st, :cu, :info, \'0\', :h)',
         [
             ':d' => date('Y-m-d'), ':h' => date('H:i:s'),
             ':id' => mb_substr($identifiant, 0, 50), ':ip' => Http::ip(),

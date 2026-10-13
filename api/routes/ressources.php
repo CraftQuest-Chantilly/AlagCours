@@ -127,8 +127,8 @@ function route_ressources_telecharger(string $codePromo, string $numFicParam): v
     if (!is_file($chemin)) Http::erreur(404, 'Fichier absent du serveur.');
 
     Db::exec(
-        'INSERT INTO "TS_Download" ("Dow_Date","Dow_Heure","Dow_Identifiant","Dow_IP","Dow_Fichier","Dow_CodeUser","Dow_Info","Dow_CodePromo","Dow_Groupe")
-         VALUES (:d, :h, :id, :ip, :fic, :cu, :info, :promo, :groupe)',
+        'INSERT INTO "TS_Download" ("Dow_IdLOG","Dow_Date","Dow_Heure","Dow_Identifiant","Dow_IP","Dow_Fichier","Dow_CodeUser","Dow_Info","Dow_CodePromo","Dow_Groupe")
+         VALUES ((SELECT COALESCE(MAX("Dow_IdLOG"), 0) + 1 FROM "TS_Download"), :d, :h, :id, :ip, :fic, :cu, :info, :promo, :groupe)',
         [
             ':d' => date('Y-m-d'), ':h' => date('H:i:s'),
             ':id' => mb_substr(trim(($c['prenom'] ?? '') . ' ' . ($c['nom'] ?? '')), 0, 50),
@@ -438,8 +438,8 @@ function route_admin_ressources_creer_dossier(string $numFicParam): void
     if (!is_dir($chemin) && !mkdir($chemin, 0755, true)) Http::erreur(500, 'Impossible de créer le dossier sur le serveur.');
 
     $id = Db::ligne(
-        'INSERT INTO "T_Fichier" ("Fic_NomFic","Fic_Chem","Fic_DossierPère","Fic_TypeFouD","Fic_DateCréation","Fic_InvisibleDeBase")
-         VALUES (:nom, :chem, :parent, \'D\', :date, false) RETURNING "Fic_NumFic" AS id',
+        'INSERT INTO "T_Fichier" ("Fic_NumFic","Fic_NomFic","Fic_Chem","Fic_DossierPère","Fic_TypeFouD","Fic_DateCréation","Fic_InvisibleDeBase")
+         VALUES ((SELECT COALESCE(MAX("Fic_NumFic"), 0) + 1 FROM "T_Fichier"), :nom, :chem, :parent, \'D\', :date, false) RETURNING "Fic_NumFic" AS id',
         [':nom' => $nom, ':chem' => $chemEnfants, ':parent' => $parent, ':date' => date('Y-m-d')]
     );
     Http::json(['numFic' => (string)$id['id'], 'nom' => $nom, 'type' => 'D'], 201);
@@ -468,8 +468,8 @@ function route_admin_ressources_upload(string $numFicParam): void
 
     $tailleKo = (int)round(filesize($dest) / 1024);
     $id = Db::ligne(
-        'INSERT INTO "T_Fichier" ("Fic_NomFic","Fic_Chem","Fic_DossierPère","Fic_TypeFouD","Fic_TailleKO","Fic_DateCréation","Fic_InvisibleDeBase")
-         VALUES (:nom, :chem, :parent, \'F\', :taille, :date, false) RETURNING "Fic_NumFic" AS id',
+        'INSERT INTO "T_Fichier" ("Fic_NumFic","Fic_NomFic","Fic_Chem","Fic_DossierPère","Fic_TypeFouD","Fic_TailleKO","Fic_DateCréation","Fic_InvisibleDeBase")
+         VALUES ((SELECT COALESCE(MAX("Fic_NumFic"), 0) + 1 FROM "T_Fichier"), :nom, :chem, :parent, \'F\', :taille, :date, false) RETURNING "Fic_NumFic" AS id',
         [':nom' => $nom, ':chem' => fic_dossier_pour_enfants($p), ':parent' => $parent, ':taille' => $tailleKo, ':date' => date('Y-m-d')]
     );
     Http::json(['numFic' => (string)$id['id'], 'nom' => $nom, 'type' => 'F', 'tailleKo' => $tailleKo], 201);

@@ -38,6 +38,18 @@ function route_atelier_schema(): void
     Http::json(['tables' => $r['tables'] ?? []]);
 }
 
+/** Clés primaires + relations (FK) d'une base, pour le diagramme de l'entraînement libre.
+ *  Fonction SQL additive db/atelier_relations.sql ; si elle n'est pas encore créée, le front
+ *  n'affiche simplement pas le diagramme (erreur gérée côté page). */
+function route_atelier_relations(): void
+{
+    Jeton::utilisateur();
+    $base = (string)($_GET['base'] ?? '');
+    if (!preg_match('/^[a-z0-9_-]+$/', $base)) Http::erreur(400, 'Base invalide.');
+    $r = Db::ligne('SELECT sc_sql_atelier_relations(:b) AS rel', [':b' => $base]);
+    Http::json($r['rel'] ?? ['cles' => [], 'relations' => []]);
+}
+
 /** Exécute une requête SELECT du stagiaire en entraînement libre (lecture seule, bac à sable). */
 function route_atelier_executer(): void
 {

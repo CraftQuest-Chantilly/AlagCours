@@ -768,9 +768,9 @@ function tailleLisible(ko) {
     <h1 class="text-xl font-semibold text-alag-navy">Gestion des fichiers</h1>
     <p v-if="erreur" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreur }}</p>
 
-    <!-- Cette grille sort volontairement de la largeur habituelle (max-w-6xl de AppLayout) pour
-         occuper toute la largeur de l'écran — demande explicite de Jérôme pour cet écran seul. -->
-    <div class="relative left-1/2 w-screen -translate-x-1/2 px-2 sm:px-4">
+    <!-- Écran pleine largeur (demande de Jérôme) : AppLayout ne borne pas la largeur des routes
+         marquées meta.large, la grille occupe donc tout l'espace à droite de la sidebar. -->
+    <div>
       <div class="grid grid-cols-1 gap-4 xl:grid-cols-4">
         <!-- ────────────────── COL 1 : arborescence + recherche ────────────────── -->
         <section class="sc-card flex flex-col overflow-hidden xl:max-h-[80vh]">

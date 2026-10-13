@@ -1,3 +1,10 @@
 api/config.local.php
 front/node_modules
 front/dist
+
+# Ajoutés le 13/10/2026
+front/.env.local
+front/.env*.local
+front/vite.config.js.timestamp-*
+_livraison/
+*.tgz
