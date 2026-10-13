@@ -54,7 +54,7 @@ const ouvrir = (code) => router.push({ name: 'formation', params: { code } })
             </tr>
           </thead>
           <tbody>
-            <tr v-for="f in formations" :key="f.code" class="cursor-pointer border-t border-slate-100 hover:bg-alag-blue-light/50" @click="ouvrir(f.code)">
+            <tr v-for="f in formations" :key="f.code" class="cursor-pointer border-t border-slate-100 hover:bg-paper" @click="ouvrir(f.code)">
               <td class="px-3 py-2 font-medium text-slate-900">{{ f.libelle }}</td>
               <td class="px-3 py-2">{{ f.sujet }}</td>
               <td class="px-3 py-2">{{ f.version }}</td>
@@ -70,7 +70,7 @@ const ouvrir = (code) => router.push({ name: 'formation', params: { code } })
         <!-- Cartes (mobile) -->
         <ul class="divide-y divide-slate-100 md:hidden">
           <li v-for="f in formations" :key="f.code">
-            <button type="button" class="w-full px-4 py-3 text-left hover:bg-alag-blue-light/50" @click="ouvrir(f.code)">
+            <button type="button" class="w-full px-4 py-3 text-left hover:bg-paper" @click="ouvrir(f.code)">
               <span class="block font-medium text-slate-900">{{ f.libelle }}</span>
               <span class="block text-sm text-slate-600">{{ f.sujet }} {{ f.version }} · niveau {{ f.niveau || '—' }}</span>
               <span class="block text-sm text-slate-500">Du {{ dateFr(f.du) }} au {{ dateFr(f.au) }} · {{ f.nbJours }} j</span>

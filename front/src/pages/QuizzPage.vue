@@ -30,7 +30,7 @@ onMounted(charger)
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-blue-dark hover:underline">‹ Retour à la formation</RouterLink>
+    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-navy hover:underline">‹ Retour à la formation</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Quizz</h1>
 
@@ -42,12 +42,12 @@ onMounted(charger)
       <ul v-else class="divide-y divide-slate-100 text-sm">
         <li v-for="q in quizz" :key="q.codeQProm">
           <RouterLink :to="{ name: 'quizz-session', params: { code, qprom: q.codeQProm } }"
-                      class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-alag-blue-light/50">
+                      class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-paper">
             <span>
               <span class="font-medium text-slate-900">{{ q.nom }}</span>
               <span v-if="q.date" class="ml-2 text-xs text-slate-500">{{ dateFr(q.date) }}<template v-if="q.heureDebut"> · {{ q.heureDebut }}–{{ q.heureFin }}</template></span>
             </span>
-            <span v-if="q.valideNote" class="text-xs font-medium text-alag-blue-dark">Note : {{ q.note }} / {{ q.nbQuestions }}</span>
+            <span v-if="q.valideNote" class="text-xs font-medium text-alag-navy">Note : {{ q.note }} / {{ q.nbQuestions }}</span>
             <span v-else class="text-xs text-slate-500">{{ q.nbQuestions }} question{{ q.nbQuestions > 1 ? 's' : '' }} · en attente de correction</span>
           </RouterLink>
         </li>

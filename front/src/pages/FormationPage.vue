@@ -1,4 +1,5 @@
 <script setup>
+import Icone from '@/components/Icone.vue'
 // Remplace PAGE__Accueil d'al-cours : en-tête de la formation + modules.
 // Un module n'apparaît que s'il est activé pour la promo (E9, 30/09/2026 : table
 // T_Promo_Option_Reel, cases à cocher sur la fiche promo — remplace l'ancienne règle des
@@ -31,13 +32,13 @@ onMounted(async () => {
 // Ordre et libellés repris des boutons de PAGE__Accueil. `route` : nom de route Vue Router une
 // fois l'écran reconstruit ; tant qu'absent, la tuile reste affichée mais non cliquable.
 const CATALOGUE = [
-  { cle: 'testPositionnement', titre: 'Test de positionnement', icone: '?', apresDebut: false },
-  { cle: 'signature', titre: 'Signature feuille de présence', icone: '✍', apresDebut: false, route: 'signature' },
-  { cle: 'ressources', titre: 'Fichiers, exercices, ressources', icone: '📁', apresDebut: false, route: 'ressources' },
-  { cle: 'quizz', titre: 'Quizz', icone: '❓', apresDebut: true, route: 'quizz' },
-  { cle: 'evaluation', titre: 'Évaluation de la formation', icone: '📝', apresDebut: true, route: 'evaluation' },
-  { cle: 'avis', titre: 'Avis', icone: '★', apresDebut: false, route: 'avis' },
-  { cle: 'atelier', titre: 'Atelier SQL', icone: '🗄', apresDebut: false, route: 'atelier' }
+  { cle: 'testPositionnement', titre: 'Test de positionnement', icone: 'positionnement', apresDebut: false },
+  { cle: 'signature', titre: 'Signature feuille de présence', icone: 'signature', apresDebut: false, route: 'signature' },
+  { cle: 'ressources', titre: 'Fichiers, exercices, ressources', icone: 'dossier', apresDebut: false, route: 'ressources' },
+  { cle: 'quizz', titre: 'Quizz', icone: 'quizz', apresDebut: true, route: 'quizz' },
+  { cle: 'evaluation', titre: 'Évaluation de la formation', icone: 'evaluation', apresDebut: true, route: 'evaluation' },
+  { cle: 'avis', titre: 'Avis', icone: 'avis', apresDebut: false, route: 'avis' },
+  { cle: 'atelier', titre: 'Atelier SQL', icone: 'sql', apresDebut: false, route: 'atelier' }
 ]
 
 const modules = computed(() => CATALOGUE.filter((m) => formation.value?.modules?.[m.cle]))
@@ -45,7 +46,7 @@ const modules = computed(() => CATALOGUE.filter((m) => formation.value?.modules?
 
 <template>
   <div class="space-y-6">
-    <RouterLink :to="{ name: 'formations' }" class="text-sm text-alag-blue-dark hover:underline">‹ Mes formations</RouterLink>
+    <RouterLink :to="{ name: 'formations' }" class="text-sm text-alag-navy hover:underline">‹ Mes formations</RouterLink>
 
     <p v-if="erreur" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreur }}</p>
     <p v-else-if="chargement" class="text-sm text-slate-500">Chargement…</p>
@@ -73,15 +74,15 @@ const modules = computed(() => CATALOGUE.filter((m) => formation.value?.modules?
             :is="m.route && (!m.apresDebut || formation.commence) ? 'RouterLink' : 'div'"
             v-for="m in modules" :key="m.cle" data-test="module"
             :to="m.route ? { name: m.route, params: { code } } : undefined"
-            class="flex items-center justify-between gap-3 rounded-xl bg-[#0f5a7d] px-4 py-4 text-white shadow-sm"
-            :class="m.route && (!m.apresDebut || formation.commence) ? 'hover:bg-[#0c4a68]' : 'opacity-80'">
-            <div>
-              <div class="font-semibold">{{ m.titre }}</div>
-              <div class="text-xs text-white/80">
+            class="sc-tile"
+            :aria-disabled="m.route && (!m.apresDebut || formation.commence) ? undefined : 'true'">
+            <span class="sc-tile-icone"><Icone :nom="m.icone" class="h-5 w-5" /></span>
+            <div class="min-w-0">
+              <div class="font-semibold text-slate-900">{{ m.titre }}</div>
+              <div class="text-xs text-slate-600">
                 {{ m.apresDebut && !formation.commence ? 'Disponible quand la formation aura commencé' : (m.route ? '' : 'Bientôt disponible') }}
               </div>
             </div>
-            <span class="text-2xl" aria-hidden="true">{{ m.icone }}</span>
           </component>
         </div>
       </section>
@@ -104,12 +105,12 @@ const modules = computed(() => CATALOGUE.filter((m) => formation.value?.modules?
               </span>
             </div>
             <details v-if="s.pointsVus?.length" class="mt-1">
-              <summary class="cursor-pointer text-xs font-medium text-alag-blue-dark">
+              <summary class="cursor-pointer text-xs font-medium text-alag-navy">
                 Points vus pendant cette séance ({{ s.pointsVus.length }})
               </summary>
               <ul class="mt-1 flex flex-wrap gap-1.5">
                 <li v-for="(pt, idx) in s.pointsVus" :key="idx"
-                    class="rounded-full bg-alag-blue-light px-2.5 py-1 text-xs text-alag-navy">
+                    class="rounded-full bg-paper px-2.5 py-1 text-xs text-alag-navy">
                   {{ pt }}
                 </li>
               </ul>

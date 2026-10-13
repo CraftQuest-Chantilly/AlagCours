@@ -78,7 +78,7 @@ async function repondre(q) {
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'atelier', params: { code } }" class="text-sm text-alag-blue-dark hover:underline">‹ Retour à l'atelier SQL</RouterLink>
+    <RouterLink :to="{ name: 'atelier', params: { code } }" class="text-sm text-alag-navy hover:underline">‹ Retour à l'atelier SQL</RouterLink>
 
     <p v-if="erreur" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreur }}</p>
     <p v-else-if="chargement" class="text-sm text-slate-500">Chargement…</p>
@@ -102,12 +102,12 @@ async function repondre(q) {
         </div>
 
         <textarea v-model="etatQ(q.numQuestion).requete" rows="3" spellcheck="false"
-                  class="block w-full rounded-lg border-slate-300 font-mono text-sm"
+                  class="block w-full sc-input font-mono"
                   :disabled="!partiel.dansFenetre || q.tentatives >= partiel.tentativesMax"
                   placeholder="select …"></textarea>
 
         <div class="flex items-center justify-between gap-2">
-          <button type="button" class="rounded-lg bg-alag-blue-dark px-3 py-1.5 text-xs font-medium text-white hover:bg-[#0c4a68] disabled:opacity-50"
+          <button type="button" class="rounded-lg bg-alag-navy px-3 py-1.5 text-xs font-medium text-white hover:bg-alag-navy-dark disabled:opacity-50"
                   :disabled="!partiel.dansFenetre || etatQ(q.numQuestion).envoi || !etatQ(q.numQuestion).requete.trim() || q.tentatives >= partiel.tentativesMax"
                   @click="repondre(q)">
             {{ etatQ(q.numQuestion).envoi ? 'Envoi…' : 'Valider' }}

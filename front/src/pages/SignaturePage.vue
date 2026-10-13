@@ -115,7 +115,7 @@ onUnmounted(() => { ctx = null })
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-blue-dark hover:underline">‹ Retour à la formation</RouterLink>
+    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-navy hover:underline">‹ Retour à la formation</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Signature de présence</h1>
 
@@ -135,7 +135,7 @@ onUnmounted(() => { ctx = null })
 
             <span v-if="s.signe" class="text-xs font-medium text-green-700">✓ Signée</span>
             <button v-else-if="peutSigner(s)" type="button"
-                    class="rounded-lg bg-alag-blue-dark px-3 py-1.5 text-xs font-medium text-white hover:bg-alag-navy"
+                    class="rounded-lg bg-alag-navy px-3 py-1.5 text-xs font-medium text-white hover:bg-alag-navy"
                     @click="ouvrirSignature(s)">
               {{ s.debloque && !s.dansFenetre ? 'Signer (débloqué par le formateur)' : 'Signer' }}
             </button>
@@ -152,8 +152,8 @@ onUnmounted(() => { ctx = null })
                     @mousedown="debut" @mousemove="trace" @mouseup="fin" @mouseleave="fin"
                     @touchstart="debut" @touchmove="trace" @touchend="fin" />
             <div class="mt-2 flex flex-wrap gap-2">
-              <button type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:border-alag-blue-dark" @click="effacer">Effacer</button>
-              <button type="button" class="rounded-lg bg-alag-blue-dark px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50" :disabled="envoiEnCours" @click="valider">
+              <button type="button" class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:border-alag-navy" @click="effacer">Effacer</button>
+              <button type="button" class="rounded-lg bg-alag-navy px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50" :disabled="envoiEnCours" @click="valider">
                 {{ envoiEnCours ? 'Envoi…' : 'Valider ma signature' }}
               </button>
               <button type="button" class="rounded-lg px-3 py-1.5 text-xs text-slate-500 hover:underline" @click="fermerSignature">Annuler</button>

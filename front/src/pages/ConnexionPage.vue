@@ -32,41 +32,50 @@ async function seConnecter() {
 </script>
 
 <template>
-  <div class="relative flex min-h-screen items-center justify-center overflow-hidden bg-alag-navy px-4">
-    <img :src="`${base}logo-icon.png`" alt=""
-         class="pointer-events-none absolute left-1/2 top-1/2 h-[140vh] w-[140vh] -translate-x-1/2 -translate-y-1/2 opacity-20">
-
-    <div class="relative w-full max-w-sm rounded-2xl border border-white/30 bg-white/20 p-8 shadow-2xl backdrop-blur-xl">
-      <div class="mb-6 flex justify-center">
-        <img :src="`${base}logo-full.png`" alt="Alag-info" class="h-12">
+  <div class="grid min-h-screen bg-paper lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+    <!-- Bandeau marque : en haut sur mobile, colonne de gauche sur grand écran -->
+    <aside class="flex flex-col justify-between bg-alag-navy-deep px-6 py-6 text-white lg:px-12 lg:py-12">
+      <img :src="`${base}logo-full.png`" alt="ALAG-info — Solutions Informatiques & Formation"
+           class="h-14 w-auto self-start rounded-md lg:h-24">
+      <div class="hidden lg:block">
+        <p class="font-display text-3xl font-bold leading-tight">Vos formations,<br>vos ressources,<br>vos exercices.</p>
+        <p class="mt-4 max-w-sm text-sm text-slate-300">
+          Consultez vos formations, téléchargez les fichiers de cours, répondez aux quizz et
+          entraînez-vous en SQL depuis un seul espace.
+        </p>
       </div>
-      <h1 class="mb-6 text-center text-lg font-semibold text-white">Espace stagiaire</h1>
+      <p class="hidden text-xs text-slate-400 lg:block">ALAG-info</p>
+    </aside>
 
-      <form class="space-y-4" @submit.prevent="seConnecter">
-        <div>
-          <label for="login" class="mb-1 block text-sm font-medium text-white">Identifiant</label>
-          <input id="login" v-model="login" type="text" autocomplete="username" required
-                 class="w-full rounded-lg border border-white/40 bg-white/85 px-3 py-2 text-sm focus:border-white focus:outline-none focus:ring-1 focus:ring-white">
-        </div>
-        <div>
-          <label for="mdp" class="mb-1 block text-sm font-medium text-white">Mot de passe</label>
-          <div class="relative">
-            <input id="mdp" v-model="mdp" :type="voirMdp ? 'text' : 'password'" autocomplete="current-password" required
-                   class="w-full rounded-lg border border-white/40 bg-white/85 px-3 py-2 pr-16 text-sm focus:border-white focus:outline-none focus:ring-1 focus:ring-white">
-            <button type="button" class="absolute inset-y-0 right-2 my-auto h-7 rounded px-2 text-xs font-medium text-alag-navy hover:bg-white/60"
-                    :aria-pressed="voirMdp" @click="voirMdp = !voirMdp">
-              {{ voirMdp ? 'Masquer' : 'Afficher' }}
-            </button>
+    <!-- Formulaire -->
+    <main class="flex items-center justify-center px-6 py-10">
+      <div class="w-full max-w-sm">
+        <h1 class="font-display text-2xl font-bold text-alag-navy">Connexion</h1>
+        <p class="mt-1 text-sm text-slate-600">Stagiaires et formateurs : même identifiant que d'habitude.</p>
+
+        <form class="mt-8 space-y-5" @submit.prevent="seConnecter">
+          <div>
+            <label for="login" class="mb-1 block text-sm font-medium text-slate-800">Identifiant</label>
+            <input id="login" v-model="login" type="text" autocomplete="username" required autofocus class="sc-input w-full">
           </div>
-        </div>
+          <div>
+            <label for="mdp" class="mb-1 block text-sm font-medium text-slate-800">Mot de passe</label>
+            <div class="relative">
+              <input id="mdp" v-model="mdp" :type="voirMdp ? 'text' : 'password'" autocomplete="current-password" required class="sc-input w-full pr-24">
+              <button type="button" class="absolute inset-y-0 right-1 my-auto h-9 rounded px-3 text-xs font-medium text-alag-navy hover:bg-slate-100"
+                      :aria-pressed="voirMdp" @click="voirMdp = !voirMdp">
+                {{ voirMdp ? 'Masquer' : 'Afficher' }}
+              </button>
+            </div>
+          </div>
 
-        <p v-if="erreur" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreur }}</p>
+          <p v-if="erreur" class="border-l-4 border-red-600 bg-red-50 px-3 py-2 text-sm text-red-800" role="alert">{{ erreur }}</p>
 
-        <button type="submit" :disabled="enCours"
-                class="w-full rounded-lg bg-white py-2 text-sm font-semibold text-alag-navy shadow transition-colors hover:bg-alag-blue-light disabled:opacity-60">
-          {{ enCours ? 'Connexion…' : 'Se connecter' }}
-        </button>
-      </form>
-    </div>
+          <button type="submit" :disabled="enCours" class="sc-btn-accent w-full">
+            {{ enCours ? 'Connexion…' : 'Se connecter' }}
+          </button>
+        </form>
+      </div>
+    </main>
   </div>
 </template>

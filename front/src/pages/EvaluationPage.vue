@@ -83,7 +83,7 @@ onMounted(charger)
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-blue-dark hover:underline">‹ Retour à la formation</RouterLink>
+    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-navy hover:underline">‹ Retour à la formation</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Évaluation de la formation</h1>
 
@@ -92,7 +92,7 @@ onMounted(charger)
 
     <template v-else>
       <p v-if="envoye" class="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">Merci, votre évaluation a bien été enregistrée.</p>
-      <p v-else-if="dejaRepondu" class="rounded-lg bg-alag-blue-light px-3 py-2 text-sm text-alag-navy">Vous avez déjà évalué cette formation. Voici vos réponses.</p>
+      <p v-else-if="dejaRepondu" class="rounded-lg bg-paper px-3 py-2 text-sm text-alag-navy">Vous avez déjà évalué cette formation. Voici vos réponses.</p>
       <p v-else class="text-sm text-slate-500">Notez chaque question sur {{ noteSur }} et ajoutez un commentaire si vous le souhaitez.</p>
 
       <section class="sc-card divide-y divide-slate-100">
@@ -108,7 +108,7 @@ onMounted(charger)
               <input
                 v-model="valeursSaisies[q.code]"
                 type="number" min="0" :max="noteSur" step="1"
-                class="w-24 rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:border-alag-blue-dark focus:outline-none"
+                class="w-24 sc-input"
                 :placeholder="`0-${noteSur}`"
               />
               <span class="text-sm text-slate-500">/ {{ noteSur }}</span>
@@ -116,7 +116,7 @@ onMounted(charger)
             <textarea
               v-model="remarquesSaisies[q.code]"
               rows="2"
-              class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-alag-blue-dark focus:outline-none"
+              class="w-full sc-input"
               placeholder="Commentaire (facultatif)…"
             />
           </template>
@@ -124,7 +124,7 @@ onMounted(charger)
       </section>
 
       <button v-if="!dejaRepondu" type="button"
-              class="rounded-lg bg-alag-blue-dark px-4 py-2 text-sm font-medium text-white disabled:cursor-default disabled:opacity-50"
+              class="rounded-lg bg-alag-navy px-4 py-2 text-sm font-medium text-white disabled:cursor-default disabled:opacity-50"
               :disabled="!toutRepondu || envoiEnCours"
               @click="envoyer">
         {{ envoiEnCours ? 'Envoi…' : 'Envoyer mon évaluation' }}

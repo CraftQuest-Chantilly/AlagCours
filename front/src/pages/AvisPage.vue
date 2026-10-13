@@ -65,7 +65,7 @@ onMounted(charger)
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-blue-dark hover:underline">‹ Retour à la formation</RouterLink>
+    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-navy hover:underline">‹ Retour à la formation</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Votre avis</h1>
     <p class="text-sm text-slate-500">Votre avis est anonyme pour le formateur. Vous pouvez le modifier à tout moment.</p>
@@ -75,7 +75,7 @@ onMounted(charger)
 
     <template v-else>
       <p v-if="envoye" class="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">Merci, votre avis a bien été enregistré.</p>
-      <p v-else-if="dejaDonne" class="rounded-lg bg-alag-blue-light px-3 py-2 text-sm text-alag-navy">Vous avez déjà donné un avis pour cette formation. Vous pouvez le modifier ci-dessous.</p>
+      <p v-else-if="dejaDonne" class="rounded-lg bg-paper px-3 py-2 text-sm text-alag-navy">Vous avez déjà donné un avis pour cette formation. Vous pouvez le modifier ci-dessous.</p>
 
       <section class="sc-card divide-y divide-slate-100">
         <div v-for="c in CRITERES" :key="c.cle" class="p-4">
@@ -92,13 +92,13 @@ onMounted(charger)
         <div class="p-4">
           <label class="mb-2 block text-sm font-medium text-slate-900" for="commentaire">Commentaire (facultatif)</label>
           <textarea id="commentaire" v-model="commentaire" rows="3"
-                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-alag-blue-dark focus:outline-none"
+                    class="w-full sc-input"
                     placeholder="Vos commentaires sur la formation…" />
         </div>
       </section>
 
       <button type="button"
-              class="rounded-lg bg-alag-blue-dark px-4 py-2 text-sm font-medium text-white disabled:cursor-default disabled:opacity-50"
+              class="rounded-lg bg-alag-navy px-4 py-2 text-sm font-medium text-white disabled:cursor-default disabled:opacity-50"
               :disabled="!toutNote || envoiEnCours"
               @click="envoyer">
         {{ envoiEnCours ? 'Envoi…' : (dejaDonne ? 'Mettre à jour mon avis' : 'Envoyer mon avis') }}

@@ -1,4 +1,5 @@
 <script setup>
+import Icone from '@/components/Icone.vue'
 // Atelier SQL (E8) — écran d'accueil du module, remplace SqlRA. Deux entrées : l'entraînement
 // libre (pas de scoping par promo, base commune à tous) et la liste des partiels programmés par
 // le formateur pour CETTE promo (le cas échéant — vide tant qu'aucun formateur n'en a créé).
@@ -87,26 +88,34 @@ onUnmounted(() => {
 
 <template>
   <div class="space-y-6">
-    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-blue-dark hover:underline">‹ Retour à la formation</RouterLink>
+    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-navy hover:underline">‹ Retour à la formation</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Atelier SQL</h1>
 
     <RouterLink :to="{ name: 'atelier-entrainement', params: { code } }"
-                class="flex items-center justify-between gap-3 rounded-xl bg-[#0f5a7d] px-4 py-4 text-white shadow-sm hover:bg-[#0c4a68]">
+                class="sc-tile">
       <div>
-        <div class="font-semibold">Entraînement libre</div>
-        <div class="text-xs text-white/80">Choisissez une base, explorez son schéma et écrivez vos requêtes SELECT, sans limite de temps ni de tentatives.</div>
+        <div class="font-semibold text-slate-900">Entraînement libre</div>
+        <div class="text-xs text-slate-600">Choisissez une base, explorez son schéma et écrivez vos requêtes SELECT, sans limite de temps ni de tentatives.</div>
       </div>
-      <span class="text-2xl" aria-hidden="true">🗄</span>
+      <span class="sc-tile-icone order-first"><Icone nom="sql" class="h-5 w-5" /></span>
     </RouterLink>
 
     <RouterLink :to="{ name: 'atelier-consignes', params: { code } }"
-                class="flex items-center justify-between gap-3 rounded-xl bg-[#0f5a7d] px-4 py-4 text-white shadow-sm hover:bg-[#0c4a68]">
+                class="sc-tile">
       <div>
-        <div class="font-semibold">Consignes (exercices notés)</div>
-        <div class="text-xs text-white/80">La banque d'exercices posée par votre formateur : résolvez-les à votre rythme, vos stats se mettent à jour au fil de l'eau.</div>
+        <div class="font-semibold text-slate-900">Consignes (exercices notés)</div>
+        <div class="text-xs text-slate-600">La banque d'exercices posée par votre formateur : résolvez-les à votre rythme, vos stats se mettent à jour au fil de l'eau.</div>
       </div>
-      <span class="text-2xl" aria-hidden="true">📋</span>
+      <span class="sc-tile-icone order-first"><Icone nom="consignes" class="h-5 w-5" /></span>
+    </RouterLink>
+
+    <RouterLink :to="{ name: 'atelier-mes-stats', params: { code } }" class="sc-tile">
+      <div>
+        <div class="font-semibold text-slate-900">Mes stats</div>
+        <div class="text-xs text-slate-600">Vos essais, vos notes et votre bonus, comparés à votre promo.</div>
+      </div>
+      <span class="sc-tile-icone order-first"><Icone nom="quizz" class="h-5 w-5" /></span>
     </RouterLink>
 
     <section>
@@ -118,7 +127,7 @@ onUnmounted(() => {
         <ul v-else class="divide-y divide-slate-100 text-sm">
           <li v-for="p in partiels" :key="p.numPartiel">
             <RouterLink :to="{ name: 'atelier-partiel', params: { code, numPartiel: p.numPartiel } }"
-                        class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-alag-blue-light/50">
+                        class="flex flex-wrap items-center justify-between gap-2 px-4 py-3 hover:bg-paper">
               <span class="font-medium text-slate-900">{{ p.titre }}</span>
               <span class="text-xs" :class="etat(p).classe">{{ etat(p).texte }}</span>
             </RouterLink>
@@ -130,13 +139,13 @@ onUnmounted(() => {
     <section>
       <button type="button" class="mb-2 flex w-full items-center justify-between text-base font-semibold text-alag-navy" @click="messagerieOuverte = !messagerieOuverte">
         <span>Messagerie</span>
-        <span class="text-sm font-normal text-alag-blue-dark">{{ messagerieOuverte ? 'Fermer' : 'Ouvrir' }}</span>
+        <span class="text-sm font-normal text-alag-navy">{{ messagerieOuverte ? 'Fermer' : 'Ouvrir' }}</span>
       </button>
       <div v-if="messagerieOuverte" class="sc-card flex max-h-96 flex-col overflow-hidden">
         <p v-if="erreurMessagerie" class="p-3 text-sm text-red-700">{{ erreurMessagerie }}</p>
         <div class="flex-1 space-y-2 overflow-y-auto p-4">
           <p v-if="!messages.length" class="text-sm text-slate-600">Aucun message pour le moment.</p>
-          <div v-for="m in messages" :key="m.id" class="rounded-lg p-2 text-sm" :class="m.type === 'formateur' ? 'bg-alag-blue-light/60' : 'bg-slate-100'">
+          <div v-for="m in messages" :key="m.id" class="rounded-lg p-2 text-sm" :class="m.type === 'formateur' ? 'bg-paper' : 'bg-slate-100'">
             <div class="flex items-center justify-between gap-2 text-xs text-slate-500">
               <span class="font-medium text-slate-700">{{ m.nom }}</span>
               <span>{{ heureFrCourte(m.date) }}</span>
@@ -145,8 +154,8 @@ onUnmounted(() => {
           </div>
         </div>
         <form class="flex gap-2 border-t border-slate-100 p-3" @submit.prevent="envoyerMessage">
-          <input v-model="nouveauMessage" type="text" maxlength="1000" placeholder="Écrire un message…" class="flex-1 rounded-lg border-slate-300 text-sm" />
-          <button type="submit" :disabled="envoiMessage || !nouveauMessage.trim()" class="rounded-lg bg-alag-blue-dark px-4 py-2 text-sm font-medium text-white hover:bg-[#0c4a68] disabled:opacity-50">
+          <input v-model="nouveauMessage" type="text" maxlength="1000" placeholder="Écrire un message…" class="flex-1 sc-input" />
+          <button type="submit" :disabled="envoiMessage || !nouveauMessage.trim()" class="rounded-lg bg-alag-navy px-4 py-2 text-sm font-medium text-white hover:bg-alag-navy-dark disabled:opacity-50">
             Envoyer
           </button>
         </form>

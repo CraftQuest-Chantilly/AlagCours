@@ -62,7 +62,7 @@ onUnmounted(() => clearInterval(minuteur))
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'formateur-accueil' }" class="text-sm text-alag-blue-dark hover:underline">‹ Accueil formateur</RouterLink>
+    <RouterLink :to="{ name: 'formateur-accueil' }" class="text-sm text-alag-navy hover:underline">‹ Accueil formateur</RouterLink>
 
     <div class="flex flex-wrap items-center justify-between gap-2">
       <h1 class="text-xl font-semibold text-alag-navy">Atelier SQL — suivi en direct</h1>
@@ -110,7 +110,7 @@ onUnmounted(() => clearInterval(minuteur))
         <h2 class="border-b border-slate-100 px-4 py-3 text-sm font-semibold text-alag-navy">Messagerie</h2>
         <div class="flex-1 space-y-2 overflow-y-auto p-4">
           <p v-if="!messages.length" class="text-sm text-slate-600">Aucun message.</p>
-          <div v-for="m in messages" :key="m.id" class="rounded-lg p-2 text-sm" :class="m.type === 'formateur' ? 'bg-alag-blue-light/60' : 'bg-slate-100'">
+          <div v-for="m in messages" :key="m.id" class="rounded-lg p-2 text-sm" :class="m.type === 'formateur' ? 'bg-paper/60' : 'bg-slate-100'">
             <div class="flex items-center justify-between gap-2 text-xs text-slate-500">
               <span class="font-medium text-slate-700">{{ m.nom }}</span>
               <span>{{ heureFr(m.date) }}</span>
@@ -122,7 +122,7 @@ onUnmounted(() => clearInterval(minuteur))
           <input v-model="nouveauMessage" type="text" maxlength="1000" placeholder="Écrire un message aux stagiaires…"
                  class="flex-1 rounded-lg border-slate-300 text-sm" />
           <button type="submit" :disabled="envoiMessage || !nouveauMessage.trim()"
-                  class="rounded-lg bg-alag-blue-dark px-4 py-2 text-sm font-medium text-white hover:bg-[#0c4a68] disabled:opacity-50">
+                  class="rounded-lg bg-alag-navy px-4 py-2 text-sm font-medium text-white hover:bg-alag-navy-dark disabled:opacity-50">
             Envoyer
           </button>
         </form>

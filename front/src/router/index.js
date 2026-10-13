@@ -21,12 +21,14 @@ const routes = [
       { path: 'formations/:code/atelier', name: 'atelier', component: () => import('@/pages/AtelierPage.vue'), props: true, meta: { type: 'stagiaire' } },
       { path: 'formations/:code/atelier/entrainement', name: 'atelier-entrainement', component: () => import('@/pages/AtelierEntrainementPage.vue'), props: true, meta: { type: 'stagiaire' } },
       { path: 'formations/:code/atelier/partiels/:numPartiel', name: 'atelier-partiel', component: () => import('@/pages/AtelierPartielPage.vue'), props: true, meta: { type: 'stagiaire' } },
+      { path: 'formations/:code/atelier/stats', name: 'atelier-mes-stats', component: () => import('@/pages/AtelierMesStatsPage.vue'), props: true, meta: { type: 'stagiaire' } },
       { path: 'formations/:code/atelier/consignes', name: 'atelier-consignes', component: () => import('@/pages/AtelierConsignesPage.vue'), props: true, meta: { type: 'stagiaire' } },
       // Espace formateur (écran de connexion partagé, cf. route_login de l'API).
       { path: 'formateur', name: 'formateur-accueil', component: () => import('@/pages/FormateurAccueilPage.vue'), meta: { type: 'formateur' } },
       { path: 'formateur/atelier/partiels', name: 'admin-atelier-partiel', component: () => import('@/pages/AtelierAdminPartielPage.vue'), meta: { type: 'formateur' } },
       { path: 'formateur/atelier/consignes', name: 'admin-atelier-consignes', component: () => import('@/pages/AdminAtelierConsignesPage.vue'), meta: { type: 'formateur' } },
       { path: 'formateur/journal', name: 'admin-journal', component: () => import('@/pages/AdminJournalPage.vue'), meta: { type: 'formateur' } },
+      { path: 'formateur/atelier/stats', name: 'admin-atelier-stats', component: () => import('@/pages/AdminAtelierStatsPage.vue'), meta: { type: 'formateur' } },
       { path: 'formateur/atelier/suivi', name: 'admin-atelier-suivi', component: () => import('@/pages/AdminAtelierSuiviPage.vue'), meta: { type: 'formateur' } },
       { path: 'formateur/atelier/entrainement', name: 'admin-atelier-entrainement', component: () => import('@/pages/AtelierEntrainementPage.vue'), meta: { type: 'formateur' } },
       // Gestion des fichiers (E8bis, 26/09/2026) — remplace entièrement l'ancien flux

@@ -20,6 +20,7 @@ with sync_playwright() as p:
         print(nom,'modules:',[t.split('\n')[0] for t in pg.locator('[data-test=module]').all_inner_texts()])
         pg.screenshot(path=f'{nom}_3_formation.png', full_page=True)
         pg.reload(); pg.wait_for_selector('text=Modules'); print(nom,'rechargement conserve la session OK')
+        if nom=='mobile': pg.click('[aria-label="Ouvrir le menu"]')  # mobile : la déconnexion est dans le tiroir de menu
         pg.click('text=Déconnexion'); pg.wait_for_url('**/connexion'); print(nom,'déconnexion OK')
-        print(nom,'erreurs console:',errs)
+        print(nom,'erreurs console (un 401 est attendu : test du mauvais mot de passe):',errs)
     b.close()

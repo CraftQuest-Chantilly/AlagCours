@@ -62,14 +62,14 @@ onMounted(charger)
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'quizz', params: { code } }" class="text-sm text-alag-blue-dark hover:underline">‹ Retour aux quizz</RouterLink>
+    <RouterLink :to="{ name: 'quizz', params: { code } }" class="text-sm text-alag-navy hover:underline">‹ Retour aux quizz</RouterLink>
 
     <p v-if="erreur" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreur }}</p>
     <p v-else-if="chargement" class="text-sm text-slate-500">Chargement…</p>
 
     <template v-else-if="quizz">
       <h1 class="text-xl font-semibold text-alag-navy">{{ quizz.nom }}</h1>
-      <p v-if="quizz.valideNote" class="rounded-lg bg-alag-blue-light px-3 py-2 text-sm text-alag-navy">
+      <p v-if="quizz.valideNote" class="rounded-lg bg-paper px-3 py-2 text-sm text-alag-navy">
         Ce quizz est corrigé. Barème : {{ quizz.noteSur }}.
       </p>
       <p v-else class="text-sm text-slate-500">Vos réponses sont enregistrées automatiquement. La correction s'affichera une fois le quizz validé par votre formateur.</p>
@@ -88,14 +88,14 @@ onMounted(charger)
           </div>
 
           <textarea v-if="q.repLibre" v-model="texteLibre[q.sqq]" rows="2" maxlength="100" :disabled="quizz.valideNote"
-                    class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-alag-blue-dark focus:outline-none disabled:bg-slate-50"
+                    class="w-full sc-input disabled:bg-slate-50"
                     placeholder="Votre réponse…" @blur="envoyerTexteLibre(q)" />
 
           <div v-else class="flex flex-wrap gap-2">
             <button v-for="rep in q.reponses" :key="rep.sqr" type="button" :disabled="quizz.valideNote"
                     class="rounded-full border px-3 py-1.5 text-sm transition disabled:cursor-default"
                     :class="[
-                      rep.choisi ? 'border-alag-blue-dark bg-alag-blue-dark text-white' : 'border-slate-200 text-slate-600 hover:border-alag-blue-dark',
+                      rep.choisi ? 'border-alag-navy bg-alag-navy text-white' : 'border-slate-200 text-slate-600 hover:border-alag-navy',
                       quizz.valideNote && rep.correcte ? '!border-green-600 !bg-green-600 !text-white' : '',
                       quizz.valideNote && rep.choisi && !rep.correcte ? '!border-red-600 !bg-red-600 !text-white' : ''
                     ]"

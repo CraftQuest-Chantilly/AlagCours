@@ -1,4 +1,5 @@
 <script setup>
+import Icone from '@/components/Icone.vue'
 // Atelier SQL — banque de consignes (remplace le vrai fonctionnement de PAGE_CodeSQL/PAGE__Accueil
 // de l'ancien SqlRA) : liste d'exercices permanents posés par le formateur, résolus au rythme du
 // stagiaire, avec stats persos. Distinct du partiel chronométré (AtelierPartielPage.vue).
@@ -88,7 +89,7 @@ const progression = computed(() => {
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'atelier', params: { code } }" class="text-sm text-alag-blue-dark hover:underline">‹ Retour à l'atelier SQL</RouterLink>
+    <RouterLink :to="{ name: 'atelier', params: { code } }" class="text-sm text-alag-navy hover:underline">‹ Retour à l'atelier SQL</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Consignes</h1>
 
@@ -98,7 +99,7 @@ const progression = computed(() => {
     <template v-else>
       <label v-if="bases.length > 1" class="block text-sm font-medium text-slate-700">
         Base de données
-        <select v-model="baseChoisie" class="mt-1 block w-full rounded-lg border-slate-300 text-sm sm:w-64">
+        <select v-model="baseChoisie" class="mt-1 block w-full sc-input sm:w-64">
           <option v-for="b in bases" :key="b.code" :value="b.code">{{ b.nom }}</option>
         </select>
       </label>
@@ -122,27 +123,27 @@ const progression = computed(() => {
 
       <div v-else class="space-y-2">
         <div v-for="c in consignes" :key="c.numConsigne" class="sc-card overflow-hidden">
-          <button type="button" class="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-alag-blue-light/50" @click="ouvrirConsigne(c)">
-            <span aria-hidden="true">{{ c.dejaReussi ? '✅' : c.tentatives ? '🟡' : '⬜' }}</span>
+          <button type="button" class="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-paper" @click="ouvrirConsigne(c)">
+            <Icone :nom="c.dejaReussi ? 'ok' : c.tentatives ? 'partiel' : 'vide'" class="h-5 w-5 shrink-0" :class="c.dejaReussi ? 'text-emerald-700' : c.tentatives ? 'text-accent' : 'text-slate-400'" />
             <span class="flex-1 text-sm text-slate-900">{{ c.consigne }}</span>
             <span v-if="c.tentatives" class="text-xs text-slate-500">{{ c.tentatives }} essai{{ c.tentatives > 1 ? 's' : '' }}</span>
           </button>
 
           <div v-if="consigneOuverte === c.numConsigne" class="space-y-3 border-t border-slate-100 p-4">
             <textarea v-model="requete" rows="4" spellcheck="false"
-                      class="block w-full rounded-lg border-slate-300 font-mono text-sm"
+                      class="block w-full sc-input font-mono"
                       placeholder='select * from "T_Produit"'></textarea>
-            <button type="button" class="rounded-lg bg-alag-blue-dark px-4 py-2 text-sm font-medium text-white hover:bg-[#0c4a68] disabled:opacity-50"
+            <button type="button" class="rounded-lg bg-alag-navy px-4 py-2 text-sm font-medium text-white hover:bg-alag-navy-dark disabled:opacity-50"
                     :disabled="enCours || !requete.trim()" @click="soumettre(c.numConsigne)">
               {{ enCours ? 'Vérification…' : 'Valider' }}
             </button>
 
-            <p v-if="resultat?.correcte" class="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">✅ Bonne réponse !</p>
+            <p v-if="resultat?.correcte" class="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">Bonne réponse !</p>
             <p v-else-if="resultat && !resultat.correcte && !resultat.erreur" class="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">Résultat différent de celui attendu. Réessayez.</p>
             <p v-else-if="resultat?.erreur" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ resultat.erreur }}</p>
 
             <details v-if="historique.length">
-              <summary class="cursor-pointer text-xs font-medium text-alag-blue-dark">Historique de vos essais ({{ historique.length }})</summary>
+              <summary class="cursor-pointer text-xs font-medium text-alag-navy">Historique de vos essais ({{ historique.length }})</summary>
               <ul class="mt-2 space-y-1">
                 <li v-for="(h, i) in historique" :key="i" class="rounded border border-slate-200 p-2 font-mono text-xs">
                   <span :class="h.correcte ? 'text-emerald-700' : 'text-red-600'">{{ h.correcte ? '✓' : '✗' }}</span>

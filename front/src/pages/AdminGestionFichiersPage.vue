@@ -1,4 +1,5 @@
 <script setup>
+import Icone from '@/components/Icone.vue'
 // Formateur — PAGE_Fichiers_Adm (26/09/2026, revu le même jour en 4 colonnes plein écran sur
 // demande de Jérôme). REMPLACE ENTIÈREMENT l'ancien flux AdminPromosPage.vue /
 // AdminPromoFichiersPage.vue. 4 colonnes, chacune son rôle :
@@ -130,11 +131,12 @@ const inputFichier = ref(null)
 
 async function creerDossier() {
   const nom = nouveauDossierNom.value.trim()
-  if (!nom || dossierCourant.value === null) return
+  if (!nom) return
   creationDossierEnCours.value = true
   erreur.value = ''
   try {
-    await api(`/admin/ressources/${dossierCourant.value}/dossier`, { method: 'POST', body: { nom } })
+    // Racine = 0 (le serveur gère cette convention).
+    await api(`/admin/ressources/${dossierCourant.value ?? 0}/dossier`, { method: 'POST', body: { nom } })
     nouveauDossierNom.value = ''
     await chargerDossier()
   } catch (e) {
@@ -763,7 +765,7 @@ function tailleLisible(ko) {
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'formateur-accueil' }" class="text-sm text-alag-blue-dark hover:underline">‹ Retour à l'accueil</RouterLink>
+    <RouterLink :to="{ name: 'formateur-accueil' }" class="text-sm text-alag-navy hover:underline">‹ Retour à l'accueil</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Gestion des fichiers</h1>
     <p v-if="erreur" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreur }}</p>
@@ -776,7 +778,7 @@ function tailleLisible(ko) {
         <section class="sc-card flex flex-col overflow-hidden xl:max-h-[80vh]">
           <h2 class="border-b border-slate-100 px-4 py-3 text-sm font-semibold text-alag-navy">
             Serveur — dossiers &amp; fichiers
-            <span v-if="nbSelectionnes" class="ml-1 font-normal text-alag-blue-dark">({{ nbSelectionnes }} sélectionné{{ nbSelectionnes > 1 ? 's' : '' }})</span>
+            <span v-if="nbSelectionnes" class="ml-1 font-normal text-alag-navy">({{ nbSelectionnes }} sélectionné{{ nbSelectionnes > 1 ? 's' : '' }})</span>
           </h2>
           <div class="border-b border-slate-100 p-2">
             <input v-model="qRecherche" type="search" placeholder="Rechercher un fichier par son nom…"
@@ -786,14 +788,14 @@ function tailleLisible(ko) {
           <template v-if="rechercheActive">
             <p v-if="rechercheEnCours" class="p-4 text-sm text-slate-500">Recherche…</p>
             <ul v-else class="flex-1 divide-y divide-slate-100 overflow-y-auto text-sm">
-              <li v-for="f in resultatsRecherche" :key="f.numFic" class="flex items-center gap-3 px-3 py-2 hover:bg-alag-blue-light/30">
+              <li v-for="f in resultatsRecherche" :key="f.numFic" class="flex items-center gap-3 px-3 py-2 hover:bg-paper/30">
                 <input type="checkbox" class="h-4 w-4 shrink-0 rounded border-slate-300" :checked="estCoche(f)" @change="basculerSelection(f)">
-                <span aria-hidden="true">{{ f.type === 'L' ? '🔗' : '📄' }}</span>
+                <Icone :nom="f.type === 'L' ? 'lien' : 'fichier'" class="inline h-4 w-4 text-slate-500" />
                 <span class="min-w-0 flex-1">
                   <span class="block truncate text-slate-900">{{ f.nom }}</span>
                   <span class="block truncate text-xs text-slate-400">{{ f.chem }}</span>
                 </span>
-                <button type="button" class="shrink-0 text-xs font-medium text-alag-blue-dark hover:underline disabled:opacity-50"
+                <button type="button" class="shrink-0 text-xs font-medium text-alag-navy hover:underline disabled:opacity-50"
                         :disabled="telechargementEnCours === f.numFic" @click="telechargerFichier(f)">
                   {{ telechargementEnCours === f.numFic ? '…' : (f.type === 'L' ? 'Ouvrir' : 'Télécharger') }}
                 </button>
@@ -812,16 +814,16 @@ function tailleLisible(ko) {
             <p v-if="chargementDossier" class="p-4 text-sm text-slate-500">Chargement…</p>
             <ul v-else class="flex-1 divide-y divide-slate-100 overflow-y-auto text-sm">
               <li v-for="f in contenuDossier" :key="f.numFic">
-                <button v-if="f.type === 'D'" type="button" class="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-alag-blue-light/50" @click="ouvrirDossier(f.numFic, f.nom)">
-                  <span aria-hidden="true">📁</span>
+                <button v-if="f.type === 'D'" type="button" class="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-paper/50" @click="ouvrirDossier(f.numFic, f.nom)">
+                  <Icone nom="dossier" class="inline h-4 w-4 text-alag-navy" />
                   <span class="flex-1 text-slate-900">{{ f.nom }}</span>
                 </button>
-                <div v-else class="flex items-center gap-3 px-3 py-2 hover:bg-alag-blue-light/30">
+                <div v-else class="flex items-center gap-3 px-3 py-2 hover:bg-paper/30">
                   <input type="checkbox" class="h-4 w-4 shrink-0 rounded border-slate-300" :checked="estCoche(f)" @change="basculerSelection(f)">
-                  <span aria-hidden="true">{{ f.type === 'L' ? '🔗' : '📄' }}</span>
+                  <Icone :nom="f.type === 'L' ? 'lien' : 'fichier'" class="inline h-4 w-4 text-slate-500" />
                   <span class="min-w-0 flex-1 truncate text-slate-900">{{ f.nom }}</span>
                   <span class="shrink-0 text-xs text-slate-500">{{ tailleLisible(f.tailleKo) }}</span>
-                  <button type="button" class="shrink-0 text-xs font-medium text-alag-blue-dark hover:underline disabled:opacity-50"
+                  <button type="button" class="shrink-0 text-xs font-medium text-alag-navy hover:underline disabled:opacity-50"
                           :disabled="telechargementEnCours === f.numFic" @click="telechargerFichier(f)">
                     {{ telechargementEnCours === f.numFic ? '…' : (f.type === 'L' ? 'Ouvrir' : 'Télécharger') }}
                   </button>
@@ -839,14 +841,13 @@ function tailleLisible(ko) {
         <!-- ────────────────── COL 2 : bandeau + client + cours ────────────────── -->
         <section class="space-y-4 xl:max-h-[80vh] xl:overflow-y-auto">
           <div class="sc-card space-y-2 p-4">
-            <h2 class="text-sm font-semibold text-alag-navy">Ajouter au dossier sélectionné à gauche</h2>
+            <h2 class="text-sm font-semibold text-alag-navy">{{ dossierCourant === null ? 'Ajouter à la racine' : 'Ajouter au dossier sélectionné à gauche' }}</h2>
             <div class="flex flex-wrap gap-2">
               <input v-model="nouveauDossierNom" type="text" placeholder="Nom du nouveau dossier"
-                     :disabled="dossierCourant === null"
-                     class="flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm disabled:bg-slate-50"
+                     class="min-w-0 flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm disabled:bg-slate-50"
                      @keyup.enter="creerDossier">
-              <button type="button" class="rounded-lg border border-alag-blue-dark px-3 py-1.5 text-xs font-medium text-alag-blue-dark hover:bg-alag-blue-light disabled:opacity-50"
-                      :disabled="!nouveauDossierNom.trim() || dossierCourant === null || creationDossierEnCours" @click="creerDossier">
+              <button type="button" class="rounded-lg border border-alag-navy px-3 py-1.5 text-xs font-medium text-alag-navy hover:bg-paper disabled:opacity-50"
+                      :disabled="!nouveauDossierNom.trim() || creationDossierEnCours" @click="creerDossier">
                 {{ creationDossierEnCours ? 'Création…' : 'Créer le dossier' }}
               </button>
             </div>
@@ -854,7 +855,7 @@ function tailleLisible(ko) {
               <input ref="inputFichier" type="file" :disabled="dossierCourant === null || uploadEnCours" class="text-sm" @change="deposerFichier">
               <span v-if="uploadEnCours" class="ml-2 text-xs text-slate-500">Envoi en cours…</span>
             </div>
-            <p v-if="dossierCourant === null" class="text-xs text-amber-700">Ouvrez d'abord un dossier à gauche (pas d'ajout à la racine).</p>
+            <p v-if="dossierCourant === null" class="text-xs text-amber-700">Dépôt de fichier : ouvrez d'abord un dossier à gauche (la création de dossier à la racine est possible).</p>
           </div>
 
           <div class="sc-card space-y-2 p-4">
@@ -864,8 +865,8 @@ function tailleLisible(ko) {
             <p v-if="rechercheClientEnCours" class="text-xs text-slate-500">Recherche…</p>
             <ul v-else-if="clients.length" class="max-h-40 divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-100 text-sm">
               <li v-for="c in clients" :key="c.code">
-                <button type="button" class="flex w-full items-center justify-between px-3 py-1.5 text-left hover:bg-alag-blue-light/50"
-                        :class="clientChoisi?.code === c.code ? 'bg-alag-blue-light/60 font-medium' : ''"
+                <button type="button" class="flex w-full items-center justify-between px-3 py-1.5 text-left hover:bg-paper/50"
+                        :class="clientChoisi?.code === c.code ? 'bg-paper/60 font-medium' : ''"
                         @click="choisirClient(c)">
                   {{ c.nom }}
                 </button>
@@ -877,9 +878,9 @@ function tailleLisible(ko) {
           <div v-if="clientChoisi" class="sc-card space-y-2 p-4">
             <h2 class="text-sm font-semibold text-alag-navy">Cours de « {{ clientChoisi.nom }} »</h2>
             <div class="flex flex-wrap gap-1 text-xs">
-              <button type="button" class="rounded-full px-2.5 py-1" :class="periode === 'avenir' ? 'bg-alag-blue-dark text-white' : 'border border-slate-300 text-slate-600'" @click="periode = 'avenir'">À venir</button>
-              <button type="button" class="rounded-full px-2.5 py-1" :class="periode === 'passes' ? 'bg-alag-blue-dark text-white' : 'border border-slate-300 text-slate-600'" @click="periode = 'passes'">Passés</button>
-              <button type="button" class="rounded-full px-2.5 py-1" :class="periode === 'personnalise' ? 'bg-alag-blue-dark text-white' : 'border border-slate-300 text-slate-600'" @click="periode = 'personnalise'">Dates personnalisées</button>
+              <button type="button" class="rounded-full px-2.5 py-1" :class="periode === 'avenir' ? 'bg-alag-navy text-white' : 'border border-slate-300 text-slate-600'" @click="periode = 'avenir'">À venir</button>
+              <button type="button" class="rounded-full px-2.5 py-1" :class="periode === 'passes' ? 'bg-alag-navy text-white' : 'border border-slate-300 text-slate-600'" @click="periode = 'passes'">Passés</button>
+              <button type="button" class="rounded-full px-2.5 py-1" :class="periode === 'personnalise' ? 'bg-alag-navy text-white' : 'border border-slate-300 text-slate-600'" @click="periode = 'personnalise'">Dates personnalisées</button>
             </div>
             <div v-if="periode === 'personnalise'" class="flex flex-wrap gap-2">
               <input v-model="depuisPerso" type="date" class="rounded-lg border border-slate-300 px-2 py-1 text-xs">
@@ -888,8 +889,8 @@ function tailleLisible(ko) {
             <p v-if="chargementCours" class="text-xs text-slate-500">Chargement…</p>
             <ul v-else-if="cours.length" class="max-h-56 divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-100 text-sm">
               <li v-for="c in cours" :key="c.numCours">
-                <button type="button" class="flex w-full flex-col gap-0.5 px-3 py-2 text-left hover:bg-alag-blue-light/50"
-                        :class="coursChoisi?.numCours === c.numCours ? 'bg-alag-blue-light/60' : ''"
+                <button type="button" class="flex w-full flex-col gap-0.5 px-3 py-2 text-left hover:bg-paper/50"
+                        :class="coursChoisi?.numCours === c.numCours ? 'bg-paper/60' : ''"
                         @click="choisirCours(c)">
                   <span class="font-medium text-slate-900">{{ formatDate(c.date) }} · {{ c.heureDebut }}–{{ c.heureFin }}</span>
                   <span class="text-xs text-slate-500">{{ c.libellePromo }}<template v-if="c.sujet"> — {{ c.sujet }}</template></span>
@@ -902,7 +903,7 @@ function tailleLisible(ko) {
 
         <!-- ────────────────── COL 3 : promo ciblée + regroupement ────────────────── -->
         <section class="xl:max-h-[80vh] xl:overflow-y-auto">
-          <div v-if="promoCible" class="sc-card space-y-3 border-2 border-alag-blue-dark p-4">
+          <div v-if="promoCible" class="sc-card space-y-3 border-2 border-alag-navy p-4">
             <p class="text-sm">
               Promo ciblée : <strong>{{ promoCible.libelle }}</strong>
             </p>
@@ -913,7 +914,7 @@ function tailleLisible(ko) {
             </label>
 
             <details class="text-xs">
-              <summary class="cursor-pointer text-alag-blue-dark hover:underline">Options avancées (groupe, visibilité, période, commentaire)</summary>
+              <summary class="cursor-pointer text-alag-navy hover:underline">Options avancées (groupe, visibilité, période, commentaire)</summary>
               <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <label class="font-medium text-slate-600">
                   Groupe
@@ -945,7 +946,7 @@ function tailleLisible(ko) {
               </div>
             </details>
 
-            <button type="button" class="w-full rounded-lg bg-alag-blue-dark px-3 py-2 text-sm font-medium text-white hover:bg-[#0c4a68] disabled:opacity-50"
+            <button type="button" class="w-full rounded-lg bg-alag-navy px-3 py-2 text-sm font-medium text-white hover:bg-alag-navy-dark disabled:opacity-50"
                     :disabled="!peutAjouter" @click="ajouterAuRegroupement">
               {{ ajoutEnCours ? 'Ajout…' : `Ajouter ${nbSelectionnes || ''} fichier${nbSelectionnes > 1 ? 's' : ''} au regroupement` }}
             </button>
@@ -975,12 +976,12 @@ function tailleLisible(ko) {
               <h3 class="mb-2 text-xs font-semibold text-slate-600">Feuille de présence (PDF)</h3>
               <div class="flex flex-wrap gap-2">
                 <button type="button"
-                        class="flex-1 rounded-lg border border-alag-blue-dark px-3 py-2 text-xs font-medium text-alag-blue-dark hover:bg-alag-blue-light disabled:opacity-50"
+                        class="flex-1 rounded-lg border border-alag-navy px-3 py-2 text-xs font-medium text-alag-navy hover:bg-paper disabled:opacity-50"
                         :disabled="!coursChoisi || !!feuillePresenceEnCours" @click="telechargerFeuillePresence('seance')">
                   {{ feuillePresenceEnCours === 'seance' ? 'Génération…' : 'Cette séance' }}
                 </button>
                 <button type="button"
-                        class="flex-1 rounded-lg border border-alag-blue-dark px-3 py-2 text-xs font-medium text-alag-blue-dark hover:bg-alag-blue-light disabled:opacity-50"
+                        class="flex-1 rounded-lg border border-alag-navy px-3 py-2 text-xs font-medium text-alag-navy hover:bg-paper disabled:opacity-50"
                         :disabled="!!feuillePresenceEnCours" @click="telechargerFeuillePresence('promo')">
                   {{ feuillePresenceEnCours === 'promo' ? 'Génération…' : 'Toute la promo' }}
                 </button>
@@ -992,12 +993,12 @@ function tailleLisible(ko) {
               <h3 class="mb-2 text-xs font-semibold text-slate-600">Évaluation de la formation (PDF)</h3>
               <div class="flex flex-wrap gap-2">
                 <button type="button"
-                        class="flex-1 rounded-lg border border-alag-blue-dark px-3 py-2 text-xs font-medium text-alag-blue-dark hover:bg-alag-blue-light disabled:opacity-50"
+                        class="flex-1 rounded-lg border border-alag-navy px-3 py-2 text-xs font-medium text-alag-navy hover:bg-paper disabled:opacity-50"
                         :disabled="!!evaluationEnCours" @click="telechargerEvaluation('anonyme')">
                   {{ evaluationEnCours === 'anonyme' ? 'Génération…' : 'Récap anonyme' }}
                 </button>
                 <button type="button"
-                        class="flex-1 rounded-lg border border-alag-blue-dark px-3 py-2 text-xs font-medium text-alag-blue-dark hover:bg-alag-blue-light disabled:opacity-50"
+                        class="flex-1 rounded-lg border border-alag-navy px-3 py-2 text-xs font-medium text-alag-navy hover:bg-paper disabled:opacity-50"
                         :disabled="!!evaluationEnCours" @click="telechargerEvaluation('detail')">
                   {{ evaluationEnCours === 'detail' ? 'Génération…' : 'Détail par stagiaire' }}
                 </button>
@@ -1024,7 +1025,7 @@ function tailleLisible(ko) {
                 <section v-if="!groupe.libelle" class="mb-3 rounded-lg border border-slate-100">
                   <ul class="divide-y divide-slate-100 text-sm">
                     <li v-for="it in groupe.fichiers" :key="it.id" class="flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2">
-                      <span aria-hidden="true">{{ it.type === 'L' ? '🔗' : '📄' }}</span>
+                      <Icone :nom="it.type === 'L' ? 'lien' : 'fichier'" class="inline h-4 w-4 text-slate-500" />
                       <span class="min-w-0 flex-1 truncate text-slate-900">{{ it.nom }}</span>
                       <label class="flex shrink-0 items-center gap-1 text-xs text-slate-600" title="Visible par les stagiaires">
                         <input type="checkbox" class="h-3.5 w-3.5 rounded border-slate-300" :checked="it.visible" :disabled="enregistrementEnCours === it.id" @change="basculerChamp(it, 'visible')">
@@ -1039,14 +1040,14 @@ function tailleLisible(ko) {
                   </ul>
                 </section>
                 <details v-else class="mb-3 rounded-lg border border-slate-100" open>
-                  <summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-2 hover:bg-alag-blue-light/50">
-                    <span aria-hidden="true">📁</span>
+                  <summary class="flex cursor-pointer list-none items-center gap-2 px-3 py-2 hover:bg-paper/50">
+                    <Icone nom="dossier" class="inline h-4 w-4 text-alag-navy" />
                     <span class="flex-1 font-medium text-slate-900">{{ groupe.libelle }}</span>
                     <span class="text-xs text-slate-500">{{ groupe.fichiers.length }}</span>
                   </summary>
                   <ul class="divide-y divide-slate-100 border-t border-slate-100 text-sm">
                     <li v-for="it in groupe.fichiers" :key="it.id" class="flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2 pl-7">
-                      <span aria-hidden="true">{{ it.type === 'L' ? '🔗' : '📄' }}</span>
+                      <Icone :nom="it.type === 'L' ? 'lien' : 'fichier'" class="inline h-4 w-4 text-slate-500" />
                       <span class="min-w-0 flex-1 truncate text-slate-900">{{ it.nom }}</span>
                       <label class="flex shrink-0 items-center gap-1 text-xs text-slate-600" title="Visible par les stagiaires">
                         <input type="checkbox" class="h-3.5 w-3.5 rounded border-slate-300" :checked="it.visible" :disabled="enregistrementEnCours === it.id" @change="basculerChamp(it, 'visible')">

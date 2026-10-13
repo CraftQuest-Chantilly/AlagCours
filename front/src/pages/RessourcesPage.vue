@@ -1,4 +1,5 @@
 <script setup>
+import Icone from '@/components/Icone.vue'
 // Remplace PAGE_Fichiers_Promo_TD d'al-cours : fichiers/liens pour lesquels un droit existe sur
 // la promo + le groupe du stagiaire, triés dans l'ordre posé par le formateur (FicDroi_Ordre).
 // Téléchargement journalisé côté API (TS_Download), liens externes ouverts dans un nouvel onglet.
@@ -104,7 +105,7 @@ function tailleLisible(ko) {
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-blue-dark hover:underline">‹ Retour à la formation</RouterLink>
+    <RouterLink :to="{ name: 'formation', params: { code } }" class="text-sm text-alag-navy hover:underline">‹ Retour à la formation</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Fichiers, exercices, ressources</h1>
 
@@ -121,17 +122,17 @@ function tailleLisible(ko) {
           <ul class="divide-y divide-slate-100 text-sm">
             <li v-for="it in groupe.fichiers" :key="it.numFic">
               <button type="button"
-                      class="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-alag-blue-light/50 disabled:cursor-default disabled:opacity-60 disabled:hover:bg-transparent"
+                      class="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-paper disabled:cursor-default disabled:opacity-60 disabled:hover:bg-transparent"
                       :disabled="telechargementEnCours === it.numFic || it.type === 'D'"
                       @click="ouvrirFichier(it)">
-                <span aria-hidden="true">{{ it.type === 'L' ? '🔗' : it.type === 'D' ? '📁' : '📄' }}</span>
+                <Icone :nom="it.type === 'L' ? 'lien' : it.type === 'D' ? 'dossier' : 'fichier'" class="h-5 w-5 shrink-0 text-alag-navy" />
                 <span class="flex-1">
                   <span class="text-slate-900">{{ it.nom }}</span>
                   <span v-if="it.commentaire" class="block text-xs text-slate-500">{{ it.commentaire }}</span>
                 </span>
                 <span v-if="it.type === 'F'" class="text-xs text-slate-500">{{ tailleLisible(it.tailleKo) }}</span>
                 <span v-if="telechargementEnCours === it.numFic" class="text-xs text-slate-500">Téléchargement…</span>
-                <span v-else-if="it.type !== 'D'" class="text-xs font-medium text-alag-blue-dark">{{ it.type === 'L' ? 'Ouvrir' : 'Télécharger' }}</span>
+                <span v-else-if="it.type !== 'D'" class="text-xs font-medium text-alag-navy">{{ it.type === 'L' ? 'Ouvrir' : 'Télécharger' }}</span>
               </button>
             </li>
           </ul>
@@ -139,13 +140,13 @@ function tailleLisible(ko) {
 
         <!-- Groupe nommé : dossier virtuel dépliable + téléchargement groupé. -->
         <details v-else class="sc-card overflow-hidden">
-          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 hover:bg-alag-blue-light/50">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 hover:bg-paper">
             <span class="flex items-center gap-2">
-              <span aria-hidden="true">📁</span>
+              <Icone nom="dossier" class="h-5 w-5 shrink-0 text-alag-navy" />
               <span class="font-medium text-slate-900">{{ groupe.libelle }}</span>
               <span class="text-xs text-slate-500">{{ groupe.fichiers.length }} élément{{ groupe.fichiers.length > 1 ? 's' : '' }}</span>
             </span>
-            <button type="button" class="shrink-0 rounded-lg border border-alag-blue-dark px-3 py-1 text-xs font-medium text-alag-blue-dark hover:bg-alag-blue-light disabled:opacity-50"
+            <button type="button" class="shrink-0 rounded-lg border border-alag-navy px-3 py-1 text-xs font-medium text-alag-navy hover:bg-paper disabled:opacity-50"
                     :disabled="groupeEnCours === groupe.libelle"
                     @click.stop.prevent="telechargerGroupe(groupe)">
               {{ groupeEnCours === groupe.libelle ? 'Préparation…' : 'Tout télécharger' }}
@@ -154,17 +155,17 @@ function tailleLisible(ko) {
           <ul class="divide-y divide-slate-100 border-t border-slate-100 text-sm">
             <li v-for="it in groupe.fichiers" :key="it.numFic">
               <button type="button"
-                      class="flex w-full items-center gap-3 px-4 py-3 pl-9 text-left hover:bg-alag-blue-light/50 disabled:cursor-default disabled:opacity-60 disabled:hover:bg-transparent"
+                      class="flex w-full items-center gap-3 px-4 py-3 pl-9 text-left hover:bg-paper disabled:cursor-default disabled:opacity-60 disabled:hover:bg-transparent"
                       :disabled="telechargementEnCours === it.numFic || it.type === 'D'"
                       @click="ouvrirFichier(it)">
-                <span aria-hidden="true">{{ it.type === 'L' ? '🔗' : it.type === 'D' ? '📁' : '📄' }}</span>
+                <Icone :nom="it.type === 'L' ? 'lien' : it.type === 'D' ? 'dossier' : 'fichier'" class="h-5 w-5 shrink-0 text-alag-navy" />
                 <span class="flex-1">
                   <span class="text-slate-900">{{ it.nom }}</span>
                   <span v-if="it.commentaire" class="block text-xs text-slate-500">{{ it.commentaire }}</span>
                 </span>
                 <span v-if="it.type === 'F'" class="text-xs text-slate-500">{{ tailleLisible(it.tailleKo) }}</span>
                 <span v-if="telechargementEnCours === it.numFic" class="text-xs text-slate-500">Téléchargement…</span>
-                <span v-else-if="it.type !== 'D'" class="text-xs font-medium text-alag-blue-dark">{{ it.type === 'L' ? 'Ouvrir' : 'Télécharger' }}</span>
+                <span v-else-if="it.type !== 'D'" class="text-xs font-medium text-alag-navy">{{ it.type === 'L' ? 'Ouvrir' : 'Télécharger' }}</span>
               </button>
             </li>
           </ul>

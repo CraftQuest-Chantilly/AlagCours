@@ -1,12 +1,33 @@
 <script setup>
-// Atelier SQL — mini-écran formateur pour créer un partiel (en attendant l'interface formateur
-// complète, cf. commentaire de route_admin_atelier_partiel_creer). Pas de sélecteur de promo :
-// aucune route ne liste encore les promos d'un formateur, donc saisie manuelle du code promo
-// (signalé comme provisoire).
+// Atelier SQL — mini-écran formateur pour créer un partiel. La promo se choisit par recherche
+// (libellé / sujet) via GET /admin/promos?q= ; le code promo n'est jamais saisi à la main.
 import { onMounted, reactive, ref, watch } from 'vue'
 import { api } from '@/services/api'
+import { dateFr } from '@/utils'
 
 const codePromo = ref('')
+const promoChoisie = ref(null)
+const recherchePromo = ref('')
+const promosTrouvees = ref([])
+const listePromosOuverte = ref(false)
+let minuteur
+function chercherPromos() {
+  clearTimeout(minuteur)
+  minuteur = setTimeout(async () => {
+    try { promosTrouvees.value = await api('/admin/promos', { params: { q: recherchePromo.value || undefined } }) }
+    catch (e) { erreurListe.value = e.message }
+  }, 250)
+}
+function fermerListePromos() { setTimeout(() => { listePromosOuverte.value = false }, 150) }
+function ouvrirListePromos() { listePromosOuverte.value = true; chercherPromos() }
+function choisirPromo(p) {
+  promoChoisie.value = p
+  codePromo.value = p.code
+  recherchePromo.value = ''
+  listePromosOuverte.value = false
+  partielsExistants.value = []
+  chargerListe()
+}
 const partielsExistants = ref([])
 const chargementListe = ref(false)
 const erreurListe = ref('')
@@ -43,7 +64,7 @@ onMounted(async () => {
 })
 
 async function chargerListe() {
-  if (!/^\d+$/.test(codePromo.value)) { erreurListe.value = 'Code promo invalide.'; return }
+  if (!/^\d+$/.test(codePromo.value)) { erreurListe.value = 'Choisissez une promo.'; return }
   chargementListe.value = true
   erreurListe.value = ''
   try {
@@ -53,6 +74,30 @@ async function chargerListe() {
   } finally {
     chargementListe.value = false
   }
+}
+
+// Banque de consignes (BackOffice) : on pioche des questions déjà créées pour la base choisie.
+const banqueOuverte = ref(false)
+const banque = ref([])
+const banqueChoix = ref([])
+const erreurBanque = ref('')
+async function basculerBanque() {
+  banqueOuverte.value = !banqueOuverte.value
+  if (!banqueOuverte.value) return
+  erreurBanque.value = ''
+  banqueChoix.value = []
+  try { banque.value = await api('/admin/atelier/consignes', { params: { base: form.base } }) }
+  catch (e) { erreurBanque.value = e.message }
+}
+watch(() => form.base, () => { banqueOuverte.value = false })
+function ajouterDepuisBanque() {
+  const dejaLa = new Set(form.questions.map((q) => q.consigne))
+  const vides = form.questions.filter((q) => !q.consigne.trim() && !q.requeteRef.trim()).length
+  if (vides === form.questions.length) form.questions = [] // on remplace la question vide d'origine
+  for (const c of banque.value.filter((c) => banqueChoix.value.includes(c.numConsigne))) {
+    if (!dejaLa.has(c.consigne)) form.questions.push({ consigne: c.consigne, requeteRef: c.solution, bareme: 1 })
+  }
+  banqueOuverte.value = false
 }
 
 function ajouterQuestion() {
@@ -65,7 +110,7 @@ function retirerQuestion(i) {
 async function creer() {
   erreurEnvoi.value = ''
   succes.value = ''
-  if (!/^\d+$/.test(codePromo.value)) { erreurEnvoi.value = 'Code promo invalide.'; return }
+  if (!/^\d+$/.test(codePromo.value)) { erreurEnvoi.value = 'Choisissez une promo.'; return }
   if (!form.titre.trim() || !form.debut || !form.fin) { erreurEnvoi.value = 'Titre, début et fin sont obligatoires.'; return }
   for (const q of form.questions) {
     if (!q.consigne.trim() || !q.requeteRef.trim()) { erreurEnvoi.value = 'Chaque question doit avoir une consigne et une requête de référence.'; return }
@@ -126,21 +171,30 @@ function heureFr(iso) {
 
 <template>
   <div class="space-y-6">
-    <RouterLink :to="{ name: 'formateur-accueil' }" class="text-sm text-alag-blue-dark hover:underline">‹ Accueil formateur</RouterLink>
+    <RouterLink :to="{ name: 'formateur-accueil' }" class="text-sm text-alag-navy hover:underline">‹ Accueil formateur</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Atelier SQL — créer un partiel</h1>
-    <p class="text-xs text-slate-500">
-      Écran provisoire, en attendant l'interface formateur complète : le code promo se saisit à la main.
-    </p>
-
     <section class="sc-card space-y-3 p-4">
-      <label class="block text-sm font-medium text-slate-700">
-        Code promo
-        <div class="mt-1 flex gap-2">
-          <input v-model="codePromo" type="text" inputmode="numeric" class="block w-full rounded-lg border-slate-300 text-sm" placeholder="ex. 56857945295553847" />
-          <button type="button" class="shrink-0 rounded-lg border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50" @click="chargerListe">Voir les partiels</button>
+      <div class="relative">
+        <label for="promo-recherche" class="block text-sm font-medium text-slate-700">Promo</label>
+        <div v-if="promoChoisie" class="mt-1 flex items-center justify-between gap-2 rounded-lg border border-slate-300 bg-paper px-3 py-2 text-sm">
+          <span><strong>{{ promoChoisie.libelle }}</strong> {{ promoChoisie.sujet }} <span class="text-slate-500">· {{ dateFr(promoChoisie.du) }} → {{ dateFr(promoChoisie.au) }}</span></span>
+          <button type="button" class="text-xs font-medium text-alag-navy hover:underline" @click="promoChoisie = null; codePromo = ''; partielsExistants = []; ouvrirListePromos()">Changer</button>
         </div>
-      </label>
+        <template v-else>
+          <input id="promo-recherche" v-model="recherchePromo" type="search" autocomplete="off" class="sc-input mt-1 w-full"
+                 placeholder="Rechercher une promo par nom ou sujet…" @focus="ouvrirListePromos" @input="chercherPromos" @keydown.esc="listePromosOuverte = false" @blur="fermerListePromos" />
+          <ul v-if="listePromosOuverte" class="absolute z-10 mt-1 max-h-72 w-full overflow-auto rounded-lg border border-slate-300 bg-white shadow-lg">
+            <li v-if="!promosTrouvees.length" class="px-3 py-2 text-sm text-slate-500">Aucune promo trouvée.</li>
+            <li v-for="p in promosTrouvees" :key="p.code">
+              <button type="button" class="block w-full px-3 py-2 text-left text-sm hover:bg-paper" @click="choisirPromo(p)">
+                <span class="font-medium text-slate-900">{{ p.libelle }}</span> <span class="text-slate-700">{{ p.sujet }}</span>
+                <span class="block text-xs text-slate-500">{{ dateFr(p.du) }} → {{ dateFr(p.au) }}</span>
+              </button>
+            </li>
+          </ul>
+        </template>
+      </div>
       <p v-if="erreurListe" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreurListe }}</p>
       <p v-else-if="chargementListe" class="text-sm text-slate-500">Chargement…</p>
       <ul v-else-if="partielsExistants.length" class="divide-y divide-slate-100 text-sm">
@@ -148,7 +202,7 @@ function heureFr(iso) {
           <div class="flex flex-wrap items-center justify-between gap-2">
             <span class="font-medium text-slate-900">{{ p.titre }}</span>
             <span class="text-xs text-slate-500">{{ p.nbQuestions }} question{{ p.nbQuestions > 1 ? 's' : '' }} · {{ heureFr(p.debut) }} → {{ heureFr(p.fin) }}</span>
-            <button type="button" class="text-xs text-alag-blue-dark hover:underline" @click="ouvrirResultats(p)">
+            <button type="button" class="text-xs text-alag-navy hover:underline" @click="ouvrirResultats(p)">
               {{ partielOuvert === p.numPartiel ? 'Fermer' : 'Résultats' }}
             </button>
           </div>
@@ -196,28 +250,28 @@ function heureFr(iso) {
 
       <label class="block text-sm font-medium text-slate-700">
         Base
-        <select v-model="form.base" class="mt-1 block w-full rounded-lg border-slate-300 text-sm">
+        <select v-model="form.base" class="mt-1 sc-input w-full">
           <option v-for="b in bases" :key="b.code" :value="b.code">{{ b.nom }}</option>
         </select>
       </label>
 
       <label class="block text-sm font-medium text-slate-700">
         Titre
-        <input v-model="form.titre" type="text" class="mt-1 block w-full rounded-lg border-slate-300 text-sm" placeholder="ex. Partiel SQL — évaluation de fin d'année" />
+        <input v-model="form.titre" type="text" class="mt-1 sc-input w-full" placeholder="ex. Partiel SQL — évaluation de fin d'année" />
       </label>
 
       <div class="grid gap-3 sm:grid-cols-3">
         <label class="block text-sm font-medium text-slate-700">
           Début
-          <input v-model="form.debut" type="datetime-local" class="mt-1 block w-full rounded-lg border-slate-300 text-sm" />
+          <input v-model="form.debut" type="datetime-local" class="mt-1 sc-input w-full" />
         </label>
         <label class="block text-sm font-medium text-slate-700">
           Fin
-          <input v-model="form.fin" type="datetime-local" class="mt-1 block w-full rounded-lg border-slate-300 text-sm" />
+          <input v-model="form.fin" type="datetime-local" class="mt-1 sc-input w-full" />
         </label>
         <label class="block text-sm font-medium text-slate-700">
           Tentatives max / question
-          <input v-model="form.tentativesMax" type="number" min="1" class="mt-1 block w-full rounded-lg border-slate-300 text-sm" />
+          <input v-model="form.tentativesMax" type="number" min="1" class="mt-1 sc-input w-full" />
         </label>
       </div>
 
@@ -230,24 +284,45 @@ function heureFr(iso) {
           </div>
           <label class="block text-sm text-slate-700">
             Consigne
-            <textarea v-model="q.consigne" rows="2" class="mt-1 block w-full rounded-lg border-slate-300 text-sm" placeholder="ex. Lister les produits dont le prix public dépasse 10 €"></textarea>
+            <textarea v-model="q.consigne" rows="2" class="mt-1 sc-input w-full" placeholder="ex. Lister les produits dont le prix public dépasse 10 €"></textarea>
           </label>
           <label class="block text-sm text-slate-700">
             Requête de référence (SELECT)
-            <textarea v-model="q.requeteRef" rows="2" spellcheck="false" class="mt-1 block w-full rounded-lg border-slate-300 font-mono text-sm" placeholder='select * from "T_Produit" where "P_PrixPublic" > 10'></textarea>
+            <textarea v-model="q.requeteRef" rows="2" spellcheck="false" class="sc-input mt-1 w-full" placeholder='select * from "T_Produit" where "P_PrixPublic" > 10'></textarea>
           </label>
           <label class="block w-32 text-sm text-slate-700">
             Barème
-            <input v-model="q.bareme" type="number" min="0.5" step="0.5" class="mt-1 block w-full rounded-lg border-slate-300 text-sm" />
+            <input v-model="q.bareme" type="number" min="0.5" step="0.5" class="mt-1 sc-input w-full" />
           </label>
         </div>
-        <button type="button" class="text-sm text-alag-blue-dark hover:underline" @click="ajouterQuestion">+ Ajouter une question</button>
+        <div class="flex flex-wrap gap-4">
+          <button type="button" class="text-sm text-alag-navy hover:underline" @click="ajouterQuestion">+ Ajouter une question</button>
+          <button type="button" class="text-sm text-alag-navy hover:underline" @click="basculerBanque">{{ banqueOuverte ? 'Fermer la banque' : '+ Choisir dans la banque de consignes' }}</button>
+        </div>
+        <div v-if="banqueOuverte" class="rounded-lg border border-slate-300 bg-paper p-3">
+          <p v-if="erreurBanque" class="text-sm text-red-700" role="alert">{{ erreurBanque }}</p>
+          <p v-else-if="!banque.length" class="text-sm text-slate-600">Aucune consigne dans la banque pour cette base. Elles se créent dans « Consignes ».</p>
+          <template v-else>
+            <ul class="max-h-64 divide-y divide-slate-200 overflow-auto text-sm">
+              <li v-for="c in banque" :key="c.numConsigne">
+                <label class="flex cursor-pointer items-start gap-2 py-2">
+                  <input v-model="banqueChoix" type="checkbox" :value="c.numConsigne" class="mt-1 h-4 w-4" />
+                  <span class="min-w-0"><span class="block text-slate-900">{{ c.consigne }}</span>
+                    <span class="block truncate font-mono text-xs text-slate-500">{{ c.solution }}</span></span>
+                </label>
+              </li>
+            </ul>
+            <button type="button" class="sc-btn-primary mt-2 px-3 py-1.5 text-sm" :disabled="!banqueChoix.length" @click="ajouterDepuisBanque">
+              Ajouter {{ banqueChoix.length || '' }} question{{ banqueChoix.length > 1 ? 's' : '' }}
+            </button>
+          </template>
+        </div>
       </div>
 
       <p v-if="erreurEnvoi" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreurEnvoi }}</p>
       <p v-if="succes" class="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{{ succes }}</p>
 
-      <button type="button" class="rounded-lg bg-alag-blue-dark px-4 py-2 text-sm font-medium text-white hover:bg-[#0c4a68] disabled:opacity-50"
+      <button type="button" class="rounded-lg bg-alag-navy px-4 py-2 text-sm font-medium text-white hover:bg-alag-navy-dark disabled:opacity-50"
               :disabled="envoi" @click="creer">
         {{ envoi ? 'Création…' : 'Créer le partiel' }}
       </button>

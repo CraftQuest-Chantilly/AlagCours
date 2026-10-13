@@ -426,15 +426,22 @@ function route_admin_ressources_creer_dossier(string $numFicParam): void
 {
     Jeton::formateur();
     $parent = (int)$numFicParam;
-    $p = Db::ligne('SELECT * FROM "T_Fichier" WHERE "Fic_NumFic" = :n AND "Fic_TypeFouD" = \'D\'', [':n' => $parent]);
+    // 0 = racine (convention héritée : Fic_DossierPère = 0, Fic_Chem = '').
+    $p = $parent === 0 ? ['Fic_Chem' => '', 'Fic_NomFic' => '']
+        : Db::ligne('SELECT * FROM "T_Fichier" WHERE "Fic_NumFic" = :n AND "Fic_TypeFouD" = \'D\'', [':n' => $parent]);
     if (!$p) Http::erreur(404, 'Dossier parent introuvable.');
 
     $d = Http::corps();
     $nom = trim((string)($d['nom'] ?? ''));
     if ($nom === '' || preg_match('#[\\\\/]#', $nom)) Http::erreur(400, 'Nom de dossier invalide.');
+    if (Db::ligne('SELECT 1 AS x FROM "T_Fichier" WHERE "Fic_DossierPère" = :p AND "Fic_TypeFouD" = \'D\' AND lower("Fic_NomFic") = lower(:n)', [':p' => $parent, ':n' => $nom])) {
+        Http::erreur(409, 'Un dossier du même nom existe déjà ici.');
+    }
 
-    $chemEnfants = fic_dossier_pour_enfants($p);
-    $chemin = fic_chemin_disque((string)$p['Fic_Chem'], (string)$p['Fic_NomFic']) . '/' . $nom;
+    $chemEnfants = $parent === 0 ? '' : fic_dossier_pour_enfants($p);
+    $chemin = $parent === 0
+        ? fic_chemin_disque('', $nom)
+        : fic_chemin_disque((string)$p['Fic_Chem'], (string)$p['Fic_NomFic']) . '/' . $nom;
     if (!is_dir($chemin) && !mkdir($chemin, 0755, true)) Http::erreur(500, 'Impossible de créer le dossier sur le serveur.');
 
     $id = Db::ligne(

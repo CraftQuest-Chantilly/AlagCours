@@ -30,6 +30,7 @@ const menu = computed(() =>
         { label: 'Consignes', to: '/formateur/atelier/consignes', icone: I.consignes },
         { label: 'Partiels', to: '/formateur/atelier/partiels', icone: I.partiels },
         { label: 'Suivi', to: '/formateur/atelier/suivi', icone: I.suivi },
+        { label: 'Correction & stats', to: '/formateur/atelier/stats', icone: I.suivi },
         { label: 'Entraînement', to: '/formateur/atelier/entrainement', icone: I.entrainement },
         { section: 'Administration' },
         { label: 'Journal', to: '/formateur/journal', icone: I.journal }

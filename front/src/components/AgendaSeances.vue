@@ -79,7 +79,7 @@ const dansMois = (d) => mode.value === 'semaine' || d.getMonth() === reference.v
     <div class="grid grid-cols-1 gap-2 sm:grid-cols-5">
       <div v-for="d in jours" :key="isoLocal(d)"
            class="min-h-[5rem] rounded-lg border p-2"
-           :class="[isoLocal(d) === aujourdhui ? 'border-alag-blue bg-alag-blue-light/60' : 'border-slate-200 bg-white', dansMois(d) ? '' : 'opacity-40', parJour[isoLocal(d)] ? '' : 'hidden sm:block']">
+           :class="[isoLocal(d) === aujourdhui ? 'border-accent bg-accent-soft' : 'border-slate-200 bg-white', dansMois(d) ? '' : 'opacity-40', parJour[isoLocal(d)] ? '' : 'hidden sm:block']">
         <div class="mb-1 text-xs font-semibold text-slate-500">
           {{ d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: mode === 'semaine' ? 'short' : undefined }) }}
         </div>

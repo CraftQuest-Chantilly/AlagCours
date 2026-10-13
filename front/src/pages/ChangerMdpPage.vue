@@ -41,7 +41,7 @@ async function valider() {
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'formations' }" class="text-sm text-alag-blue-dark hover:underline">‹ Mes formations</RouterLink>
+    <RouterLink :to="{ name: 'formations' }" class="text-sm text-alag-navy hover:underline">‹ Mes formations</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Changer mon mot de passe</h1>
 
@@ -53,20 +53,20 @@ async function valider() {
       <form class="space-y-3" @submit.prevent="valider">
         <label class="block text-sm font-medium text-slate-700">
           Mot de passe actuel
-          <input v-model="mdpActuel" type="password" autocomplete="current-password" required class="mt-1 block w-full rounded-lg border-slate-300 text-sm" />
+          <input v-model="mdpActuel" type="password" autocomplete="current-password" required class="mt-1 block w-full sc-input" />
         </label>
         <label class="block text-sm font-medium text-slate-700">
           Nouveau mot de passe
-          <input v-model="nouveauMdp" type="password" autocomplete="new-password" required minlength="8" class="mt-1 block w-full rounded-lg border-slate-300 text-sm" />
+          <input v-model="nouveauMdp" type="password" autocomplete="new-password" required minlength="8" class="mt-1 block w-full sc-input" />
         </label>
         <label class="block text-sm font-medium text-slate-700">
           Confirmer le nouveau mot de passe
-          <input v-model="confirmation" type="password" autocomplete="new-password" required minlength="8" class="mt-1 block w-full rounded-lg border-slate-300 text-sm" />
+          <input v-model="confirmation" type="password" autocomplete="new-password" required minlength="8" class="mt-1 block w-full sc-input" />
         </label>
 
         <p v-if="erreur" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreur }}</p>
 
-        <button type="submit" :disabled="enCours" class="rounded-lg bg-alag-blue-dark px-4 py-2 text-sm font-medium text-white hover:bg-[#0c4a68] disabled:opacity-50">
+        <button type="submit" :disabled="enCours" class="rounded-lg bg-alag-navy px-4 py-2 text-sm font-medium text-white hover:bg-alag-navy-dark disabled:opacity-50">
           {{ enCours ? 'Enregistrement…' : 'Changer le mot de passe' }}
         </button>
       </form>

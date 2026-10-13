@@ -221,7 +221,7 @@ const total = computed(() => consignes.value.length)
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'formateur-accueil' }" class="text-sm text-alag-blue-dark hover:underline">‹ Accueil formateur</RouterLink>
+    <RouterLink :to="{ name: 'formateur-accueil' }" class="text-sm text-alag-navy hover:underline">‹ Accueil formateur</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Atelier SQL — BackOffice consignes</h1>
     <p class="text-xs text-slate-500">
@@ -242,9 +242,9 @@ const total = computed(() => consignes.value.length)
         <h2 class="text-sm font-semibold text-alag-navy">{{ total }} consigne{{ total > 1 ? 's' : '' }}</h2>
         <div class="flex gap-2">
           <button type="button" class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium hover:bg-slate-50" @click="importOuvert = !importOuvert">
-            {{ importOuvert ? 'Fermer l\'import' : '📥 Importer un fichier Excel' }}
+            {{ importOuvert ? 'Fermer l\'import' : 'Importer un fichier Excel' }}
           </button>
-          <button type="button" class="rounded-lg bg-alag-blue-dark px-3 py-1.5 text-xs font-medium text-white hover:bg-[#0c4a68]" @click="ouvrirNouveau">
+          <button type="button" class="rounded-lg bg-alag-navy px-3 py-1.5 text-xs font-medium text-white hover:bg-alag-navy-dark" @click="ouvrirNouveau">
             + Nouvelle consigne
           </button>
         </div>
@@ -277,7 +277,7 @@ const total = computed(() => consignes.value.length)
             </table>
           </div>
           <div class="flex gap-2">
-            <button type="button" class="rounded-lg bg-alag-blue-dark px-4 py-2 text-sm font-medium text-white hover:bg-[#0c4a68] disabled:opacity-50" :disabled="importEnCours" @click="confirmerImport">
+            <button type="button" class="rounded-lg bg-alag-navy px-4 py-2 text-sm font-medium text-white hover:bg-alag-navy-dark disabled:opacity-50" :disabled="importEnCours" @click="confirmerImport">
               {{ importEnCours ? 'Import…' : `Importer ${importApercu.length} ligne${importApercu.length > 1 ? 's' : ''}` }}
             </button>
             <button type="button" class="rounded-lg border border-slate-300 px-4 py-2 text-sm hover:bg-slate-50" @click="fermerImport">Annuler</button>
@@ -320,7 +320,7 @@ const total = computed(() => consignes.value.length)
         </label>
         <p v-if="erreurForm" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreurForm }}</p>
         <div class="flex gap-2">
-          <button type="button" class="rounded-lg bg-alag-blue-dark px-4 py-2 text-sm font-medium text-white hover:bg-[#0c4a68] disabled:opacity-50" :disabled="envoi" @click="enregistrer">
+          <button type="button" class="rounded-lg bg-alag-navy px-4 py-2 text-sm font-medium text-white hover:bg-alag-navy-dark disabled:opacity-50" :disabled="envoi" @click="enregistrer">
             {{ envoi ? 'Création…' : 'Créer' }}
           </button>
           <button type="button" class="rounded-lg border border-slate-300 px-4 py-2 text-sm hover:bg-slate-50" @click="fermerEdition">Annuler</button>
@@ -337,10 +337,10 @@ const total = computed(() => consignes.value.length)
             <span v-if="!c.visible" class="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-500">masquée</span>
             <span v-if="c.notee" class="rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-700">notée</span>
             <span class="text-xs text-slate-500">{{ c.nbReussi }}/{{ c.nbTentatives || 0 }} réussi{{ c.nbReussi > 1 ? 's' : '' }} · {{ c.nbTentatives }} essai{{ c.nbTentatives > 1 ? 's' : '' }}</span>
-            <button type="button" class="text-xs text-alag-blue-dark hover:underline" @click="ouvrirTentatives(c)">
+            <button type="button" class="text-xs text-alag-navy hover:underline" @click="ouvrirTentatives(c)">
               {{ tentativesOuvertes === c.numConsigne ? 'Fermer' : 'Tentatives' }}
             </button>
-            <button type="button" class="text-xs text-alag-blue-dark hover:underline" @click="edition === c.numConsigne ? fermerEdition() : ouvrirEdition(c)">
+            <button type="button" class="text-xs text-alag-navy hover:underline" @click="edition === c.numConsigne ? fermerEdition() : ouvrirEdition(c)">
               {{ edition === c.numConsigne ? 'Fermer' : 'Modifier' }}
             </button>
             <button type="button" class="text-xs text-red-600 hover:underline" @click="supprimer(c)">Supprimer</button>
@@ -390,7 +390,7 @@ const total = computed(() => consignes.value.length)
             </label>
             <p v-if="erreurForm" class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">{{ erreurForm }}</p>
             <div class="flex gap-2">
-              <button type="button" class="rounded-lg bg-alag-blue-dark px-4 py-2 text-sm font-medium text-white hover:bg-[#0c4a68] disabled:opacity-50" :disabled="envoi" @click="enregistrer">
+              <button type="button" class="rounded-lg bg-alag-navy px-4 py-2 text-sm font-medium text-white hover:bg-alag-navy-dark disabled:opacity-50" :disabled="envoi" @click="enregistrer">
                 {{ envoi ? 'Enregistrement…' : 'Enregistrer' }}
               </button>
               <button type="button" class="rounded-lg border border-slate-300 px-4 py-2 text-sm hover:bg-slate-50" @click="fermerEdition">Annuler</button>

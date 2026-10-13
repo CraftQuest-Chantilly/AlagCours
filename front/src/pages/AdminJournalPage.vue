@@ -39,7 +39,7 @@ function heureFr(date, heure) {
 
 <template>
   <div class="space-y-4">
-    <RouterLink :to="{ name: 'formateur-accueil' }" class="text-sm text-alag-blue-dark hover:underline">‹ Accueil formateur</RouterLink>
+    <RouterLink :to="{ name: 'formateur-accueil' }" class="text-sm text-alag-navy hover:underline">‹ Accueil formateur</RouterLink>
 
     <h1 class="text-xl font-semibold text-alag-navy">Journal des connexions</h1>
     <p class="text-xs text-slate-500">

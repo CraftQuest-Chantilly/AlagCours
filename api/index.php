@@ -23,6 +23,7 @@ require __DIR__ . '/routes/quizz.php';
 require __DIR__ . '/routes/signature.php';
 require __DIR__ . '/routes/avis.php';
 require __DIR__ . '/routes/atelier.php';
+require __DIR__ . '/routes/atelier_stats.php';
 
 set_exception_handler(function (Throwable $e) {
     error_log('[alcours api] ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine());
@@ -109,6 +110,16 @@ $routes = [
     ['GET',  '#^/atelier/consignes/(\d+)/tentatives$#',         'route_atelier_consigne_tentatives'],
     ['POST', '#^/atelier/consignes/(\d+)/repondre$#',           'route_atelier_consigne_repondre'],
     ['GET',  '#^/atelier/stats$#',                              'route_atelier_stats'],
+    ['GET',  '#^/atelier/mes-stats$#',                          'route_atelier_mes_stats'],
+    // Atelier SQL — stats, correction, bonus, promo de référence (formateur).
+    ['GET',  '#^/admin/atelier/stats$#',                        'route_admin_atelier_stats'],
+    ['GET',  '#^/admin/atelier/promos-sql$#',                   'route_admin_atelier_promos_sql'],
+    ['GET',  '#^/admin/atelier/requetes$#',                     'route_admin_atelier_requetes'],
+    ['PUT',  '#^/admin/atelier/requetes/(\d+)$#',               'route_admin_atelier_requete_modifier'],
+    ['GET',  '#^/admin/promos/(\d+)/sql-reference$#',           'route_admin_promo_sql_reference_lire'],
+    ['PUT',  '#^/admin/promos/(\d+)/sql-reference$#',           'route_admin_promo_sql_reference_ecrire'],
+    ['GET',  '#^/admin/promos/(\d+)/sql-bonus$#',               'route_admin_atelier_bonus'],
+    ['PUT',  '#^/admin/promos/(\d+)/sql-points/(\d+)$#',        'route_admin_atelier_points_ecrire'],
     // Atelier SQL — banque de consignes (formateur : BackOffice).
     ['GET',    '#^/admin/atelier/consignes$#',          'route_admin_atelier_consignes'],
     ['POST',   '#^/admin/atelier/consignes$#',          'route_admin_atelier_consigne_creer'],
